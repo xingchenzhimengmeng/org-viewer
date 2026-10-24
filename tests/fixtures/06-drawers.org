@@ -1,0 +1,7 @@
+* Heading with properties drawer
+:PROPERTIES:
+:CUSTOM_ID: sec-features
+:CATEGORY: documentation
+:CREATED: [2026-10-24 Sat]
+:END:
+Some body content after drawer.

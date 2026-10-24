@@ -1,0 +1,142 @@
+{
+  "extensionName": {
+    "message": "Org Viewer - Org-mode 预览器",
+    "description": "扩展名称"
+  },
+  "extensionDescription": {
+    "message": "现代、优雅且安全的 Chrome Org-mode 文档预览器。支持原地预览本地及网络 .org 文件，支持文件拖拽与即时渲染。",
+    "description": "扩展描述"
+  },
+  "rawView": {
+    "message": "查看源码"
+  },
+  "renderedView": {
+    "message": "渲染视图"
+  },
+  "expandAll": {
+    "message": "全部展开"
+  },
+  "collapseAll": {
+    "message": "全部折叠"
+  },
+  "outline": {
+    "message": "大纲目录"
+  },
+  "themeSystem": {
+    "message": "跟随系统"
+  },
+  "themeLight": {
+    "message": "浅色模式"
+  },
+  "themeDark": {
+    "message": "深色模式"
+  },
+  "print": {
+    "message": "打印文档"
+  },
+  "largeFileWarning": {
+    "message": "此文件大于 5MB，已暂停自动渲染以保护浏览器性能。"
+  },
+  "renderAnyway": {
+    "message": "仍然渲染"
+  },
+  "dropzoneTitle": {
+    "message": "拖拽 .org 文件到此处"
+  },
+  "dropzoneSubtitle": {
+    "message": "或者从电脑选择文件，或在下方直接粘贴 Org 文本"
+  },
+  "chooseFile": {
+    "message": "选择文件"
+  },
+  "pastePlaceholder": {
+    "message": "在此粘贴 Org-mode 纯文本内容..."
+  },
+  "renderButton": {
+    "message": "立即渲染"
+  },
+  "optionsTitle": {
+    "message": "Org Viewer 设置"
+  },
+  "optionsThemeLabel": {
+    "message": "默认主题"
+  },
+  "optionsOutlineLabel": {
+    "message": "大纲默认状态"
+  },
+  "optionsOutlineExpanded": {
+    "message": "默认展开"
+  },
+  "optionsOutlineCollapsed": {
+    "message": "默认收起"
+  },
+  "optionsWebAccessLabel": {
+    "message": "网页端 .org 自动渲染"
+  },
+  "optionsWebAccessDesc": {
+    "message": "在访问网络 URL 上的 .org 纯文本时自动渲染（需要申请可选权限）"
+  },
+  "optionsFileAccessLabel": {
+    "message": "本地文件网址访问权限"
+  },
+  "optionsFileAccessGranted": {
+    "message": "已开启（本地 file:///*.org 文件将自动接管渲染）"
+  },
+  "optionsFileAccessMissing": {
+    "message": "未开启（点击直达扩展设置开启“允许访问文件网址”）"
+  },
+  "optionsSave": {
+    "message": "设置已保存"
+  },
+  "welcomeTitle": {
+    "message": "欢迎使用 Org Viewer"
+  },
+  "welcomeStep1": {
+    "message": "第一步：开启本地文件访问权限"
+  },
+  "welcomeStep1Desc": {
+    "message": "出于安全考虑，Chrome 默认禁止扩展直接读取 file:/// 网址。如需预览本地 .org 文件："
+  },
+  "welcomeStep1Action": {
+    "message": "打开扩展管理详情页"
+  },
+  "welcomeStep1Tip": {
+    "message": "向下滑动，找到并打开「允许访问文件网址」开关。"
+  },
+  "welcomeStep2": {
+    "message": "第二步：开始体验"
+  },
+  "welcomeStep2Desc": {
+    "message": "直接在 Chrome 中打开任何 .org 文件，或者拖拽文件到 Org Viewer 标签页中。"
+  },
+  "sampleDownload": {
+    "message": "下载示例 .org 文件"
+  },
+  "optionsLanguageLabel": {
+    "message": "界面语言"
+  },
+  "optionsLanguageDesc": {
+    "message": "选择 Org Viewer 的显示语言。"
+  },
+  "langZhCN": {
+    "message": "中文 (简体)"
+  },
+  "langEn": {
+    "message": "English"
+  },
+  "openFile": {
+    "message": "打开文件"
+  },
+  "orPasteText": {
+    "message": "或在此粘贴内容"
+  },
+  "managePermission": {
+    "message": "前往设置"
+  },
+  "statusEnabled": {
+    "message": "状态：已开启。本地 file:///*.org 文件将自动接管渲染。"
+  },
+  "statusDisabled": {
+    "message": "状态：未开启。请点击“前往设置”开启“允许访问文件网址”。"
+  }
+}

@@ -1,0 +1,6 @@
+#+TODO: TODO(t) FEEDBACK(f) IN-PROGRESS(p) | RESOLVED(r) CLOSED(c)
+* TODO Open item
+* FEEDBACK Needs review
+* IN-PROGRESS Currently working
+* RESOLVED Solution verified
+* CLOSED Finished and archived

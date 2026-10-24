@@ -1,0 +1,23 @@
+#+TITLE: Weekly Engineering Sync
+#+AUTHOR: Alice & Bob
+#+DATE: 2026-10-24
+#+TODO: TODO IN-DEV | DONE
+
+* Sprint 42 Highlights
+** DONE [#A] Setup MV3 Extension skeleton :core:
+CLOSED: [2026-10-24 Sat]
+- [X] Manifest defined
+- [X] Service worker configured
+
+** IN-DEV [#B] Implement AST Parser :parser:
+SCHEDULED: <2026-10-25 Sun>
+#+BEGIN_SRC typescript
+export function parse(input: string) {
+  return compileOrg(input);
+}
+#+END_SRC
+
+| Metric        | Value  |
+|---------------+--------|
+| Test Coverage | 100%   |
+| Bundle Size   | <60KB  |

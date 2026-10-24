@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "node build.js",
+    "test": "node run-tests.js"
+  },
+  "name": "org-viewer",
+  "type": "module",
+  "description": "A clean and modern Org-mode document viewer for Google Chrome.",
+  "version": "1.0.0"
+}

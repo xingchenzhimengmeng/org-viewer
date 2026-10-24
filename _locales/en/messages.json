@@ -1,0 +1,142 @@
+{
+  "extensionName": {
+    "message": "Org Viewer",
+    "description": "The title of the extension"
+  },
+  "extensionDescription": {
+    "message": "A modern, beautiful, and secure Org-mode document viewer for Chrome. Preview .org files in-place or via drag-and-drop.",
+    "description": "The description of the extension"
+  },
+  "rawView": {
+    "message": "Raw Source"
+  },
+  "renderedView": {
+    "message": "Rendered View"
+  },
+  "expandAll": {
+    "message": "Expand All"
+  },
+  "collapseAll": {
+    "message": "Collapse All"
+  },
+  "outline": {
+    "message": "Outline"
+  },
+  "themeSystem": {
+    "message": "System Theme"
+  },
+  "themeLight": {
+    "message": "Light Theme"
+  },
+  "themeDark": {
+    "message": "Dark Theme"
+  },
+  "print": {
+    "message": "Print Document"
+  },
+  "largeFileWarning": {
+    "message": "This file is larger than 5MB. Automatic rendering was paused to preserve performance."
+  },
+  "renderAnyway": {
+    "message": "Render Anyway"
+  },
+  "dropzoneTitle": {
+    "message": "Drop your .org file here"
+  },
+  "dropzoneSubtitle": {
+    "message": "or browse from computer, or paste Org text below"
+  },
+  "chooseFile": {
+    "message": "Choose File"
+  },
+  "pastePlaceholder": {
+    "message": "Paste Org-mode plain text here..."
+  },
+  "renderButton": {
+    "message": "Render Org Text"
+  },
+  "optionsTitle": {
+    "message": "Org Viewer Settings"
+  },
+  "optionsThemeLabel": {
+    "message": "Default Theme"
+  },
+  "optionsOutlineLabel": {
+    "message": "Outline Default State"
+  },
+  "optionsOutlineExpanded": {
+    "message": "Expanded by default"
+  },
+  "optionsOutlineCollapsed": {
+    "message": "Collapsed by default"
+  },
+  "optionsWebAccessLabel": {
+    "message": "Web .org Auto-Rendering"
+  },
+  "optionsWebAccessDesc": {
+    "message": "Automatically render .org files when visiting web URLs (requires optional permission)"
+  },
+  "optionsFileAccessLabel": {
+    "message": "Local File URL Access"
+  },
+  "optionsFileAccessGranted": {
+    "message": "Enabled (local file:///*.org files will be rendered)"
+  },
+  "optionsFileAccessMissing": {
+    "message": "Disabled (Click to enable 'Allow access to file URLs')"
+  },
+  "optionsSave": {
+    "message": "Settings saved"
+  },
+  "welcomeTitle": {
+    "message": "Welcome to Org Viewer"
+  },
+  "welcomeStep1": {
+    "message": "Enable Local File Access"
+  },
+  "welcomeStep1Desc": {
+    "message": "Chrome requires manual permission for extensions to read local file:/// URLs. To view your local .org notes:"
+  },
+  "welcomeStep1Action": {
+    "message": "Open Chrome Extension Details"
+  },
+  "welcomeStep1Tip": {
+    "message": "Scroll down and toggle ON 'Allow access to file URLs'."
+  },
+  "welcomeStep2": {
+    "message": "Try It Out"
+  },
+  "welcomeStep2Desc": {
+    "message": "Open any .org file directly in Chrome, or drag and drop it into the Org Viewer tab."
+  },
+  "sampleDownload": {
+    "message": "Download Sample .org File"
+  },
+  "optionsLanguageLabel": {
+    "message": "Interface Language"
+  },
+  "optionsLanguageDesc": {
+    "message": "Choose the display language for Org Viewer."
+  },
+  "langZhCN": {
+    "message": "中文 (简体)"
+  },
+  "langEn": {
+    "message": "English"
+  },
+  "openFile": {
+    "message": "Open File"
+  },
+  "orPasteText": {
+    "message": "OR PASTE TEXT"
+  },
+  "managePermission": {
+    "message": "Manage Permission"
+  },
+  "statusEnabled": {
+    "message": "Status: Enabled. Local file:///*.org files will be rendered."
+  },
+  "statusDisabled": {
+    "message": "Status: Disabled. Click Manage Permission to enable 'Allow access to file URLs'."
+  }
+}

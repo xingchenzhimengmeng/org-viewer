@@ -1,0 +1,3 @@
+- [ ] Incomplete subtask
+- [X] Completed subtask
+- [-] Partially completed subtask

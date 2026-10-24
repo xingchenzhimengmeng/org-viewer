@@ -1,0 +1,4 @@
+Org-mode has versatile footnotes[fn:1] and named ones[fn:named].
+
+[fn:1] First footnote description.
+[fn:named] Named footnote explanation with details.

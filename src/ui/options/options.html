@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org Viewer Settings</title>
+  <link rel="stylesheet" href="../styles/github-theme.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body class="options-body">
+  <div class="options-container">
+    <header class="options-header">
+      <img src="../../../icons/icon48.png" alt="Logo" class="options-logo">
+      <div>
+        <h1 class="options-title" id="page-title">Org Viewer Settings</h1>
+        <p class="options-subtitle" id="page-subtitle">Customize theme, outline defaults, and rendering permissions.</p>
+      </div>
+    </header>
+
+    <div class="options-card">
+      <!-- Setting 1: Language -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <label class="setting-label" for="select-language" id="label-language">Interface Language</label>
+          <p class="setting-desc" id="desc-language">Choose the display language for Org Viewer.</p>
+        </div>
+        <div class="setting-control">
+          <select id="select-language" class="select-input">
+            <option value="zh_CN">中文 (简体)</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Setting 2: Theme -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <label class="setting-label" for="select-theme" id="label-theme">Default Theme</label>
+          <p class="setting-desc" id="desc-theme">Choose the preferred visual appearance for rendered documents.</p>
+        </div>
+        <div class="setting-control">
+          <select id="select-theme" class="select-input">
+            <option value="system" id="opt-theme-system">Follow System</option>
+            <option value="light" id="opt-theme-light">Light Theme</option>
+            <option value="dark" id="opt-theme-dark">Dark Theme</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Setting 3: Outline Default -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <label class="setting-label" for="select-outline" id="label-outline">Outline Default State</label>
+          <p class="setting-desc" id="desc-outline">Whether the Table of Contents sidebar is open by default when a document loads.</p>
+        </div>
+        <div class="setting-control">
+          <select id="select-outline" class="select-input">
+            <option value="true" id="opt-outline-expanded">Expanded</option>
+            <option value="false" id="opt-outline-collapsed">Collapsed</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Setting 4: Web .org rendering -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <label class="setting-label" for="toggle-web" id="label-web">Web .org Auto-Rendering</label>
+          <p class="setting-desc" id="desc-web">Automatically render raw .org plain text files when visiting web URLs. Requires optional host permission.</p>
+        </div>
+        <div class="setting-control">
+          <label class="switch">
+            <input type="checkbox" id="toggle-web">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Setting 5: Local File Access Status -->
+      <div class="setting-item">
+        <div class="setting-info">
+          <label class="setting-label" id="label-file">Local File Access Permission</label>
+          <p class="setting-desc" id="file-access-desc">Required to render local file:/// URLs.</p>
+        </div>
+        <div class="setting-control">
+          <button class="btn btn-secondary" id="btn-file-settings">Manage Permission</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-toast" id="save-toast">Settings saved successfully</div>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

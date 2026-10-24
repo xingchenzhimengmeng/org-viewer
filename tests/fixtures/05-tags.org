@@ -1,0 +1,3 @@
+* Headline with one tag :work:
+* Headline with multiple tags :project:frontend:release:
+* TODO [#A] Urgent task with tags :urgent:bug:

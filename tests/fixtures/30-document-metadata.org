@@ -1,0 +1,7 @@
+#+TITLE: Research Paper Draft
+#+AUTHOR: Dr. Linus Torvalds
+#+DATE: 2026-10-24
+#+OPTIONS: toc:t num:nil
+
+* Abstract
+This paper describes the architecture of Org Viewer.

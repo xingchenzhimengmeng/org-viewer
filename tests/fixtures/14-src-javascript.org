@@ -1,0 +1,7 @@
+#+BEGIN_SRC javascript
+function calculateTotal(items) {
+  // Sum up prices
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+console.log(calculateTotal([{ price: 10 }, { price: 20 }]));
+#+END_SRC

@@ -1,0 +1,2 @@
+See <<my-target>> for details.
+Jump to [[*Top Level Heading][Top Section]] or [[#custom-id][Custom Section]].

@@ -1,0 +1,4 @@
+#+BEGIN_QUOTE
+The best way to predict the future is to invent it.
+-- Alan Kay
+#+END_QUOTE

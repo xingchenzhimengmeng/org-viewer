@@ -1,0 +1,6 @@
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Building Chrome extension..."
+pnpm build
+#+END_SRC

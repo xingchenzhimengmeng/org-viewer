@@ -1,0 +1,5 @@
+| Language | Extension | Creator |
+|----------+-----------+---------|
+| Org      | .org      | Carsten |
+| Markdown | .md       | Gruber  |
+| TeX      | .tex      | Knuth   |

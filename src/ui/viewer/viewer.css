@@ -1,0 +1,130 @@
+﻿body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--org-canvas-subtle);
+  font-family: var(--org-font-family);
+  min-height: 100vh;
+}
+
+.drop-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px 20px;
+  box-sizing: border-box;
+}
+
+.drop-card {
+  max-width: 580px;
+  width: 100%;
+  background: var(--org-bg);
+  border: 2px dashed var(--org-border);
+  border-radius: 12px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.drop-card.drag-over {
+  border-color: #6E41A4;
+  background-color: var(--org-accent-subtle);
+}
+
+.drop-icon {
+  margin-bottom: 16px;
+}
+
+.drop-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--org-fg);
+}
+
+.drop-subtitle {
+  font-size: 14px;
+  color: var(--org-fg-muted);
+  margin: 0 0 24px 0;
+}
+
+.drop-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 28px 0 16px 0;
+  color: var(--org-fg-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--org-border);
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
+.paste-section textarea {
+  width: 100%;
+  height: 120px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-family: var(--org-mono-font);
+  font-size: 13px;
+  color: var(--org-fg);
+  background-color: var(--org-canvas-subtle);
+  border: 1px solid var(--org-border);
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.paste-section textarea:focus {
+  outline: none;
+  border-color: var(--org-accent);
+}
+
+.btn {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  background-color: #6E41A4;
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background-color: #5b358a;
+}
+
+.btn-secondary {
+  background-color: var(--org-bg);
+  color: var(--org-fg);
+  border-color: var(--org-border);
+}
+.btn-secondary:hover {
+  background-color: var(--org-canvas-subtle);
+}

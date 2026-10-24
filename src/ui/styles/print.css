@@ -1,0 +1,38 @@
+﻿/* Print optimization */
+@media print {
+  .org-topbar,
+  .org-toc-sidebar,
+  .org-fold-toggle,
+  .org-btn {
+    display: none !important;
+  }
+
+  .org-viewer-root {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .org-content-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .org-section.org-folded > .org-section-body {
+    display: block !important;
+  }
+
+  .org-section {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
+
+  .org-src-block, .org-example, .org-table {
+    page-break-inside: avoid;
+    border-color: #cccccc !important;
+  }
+}

@@ -1,0 +1,6 @@
+#+BEGIN_SRC elisp
+(defun my-org-hook ()
+  "Custom Org-mode setup."
+  (setq org-hide-leading-stars t)
+  (message "Org loaded successfully"))
+#+END_SRC

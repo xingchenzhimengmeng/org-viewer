@@ -1,0 +1,3 @@
+- Emacs :: An extensible, customizable, free/libre text editor.
+- Org-mode :: Your life in plain text.
+- Chrome :: Fast and modern web browser.

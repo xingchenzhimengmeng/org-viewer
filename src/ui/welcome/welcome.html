@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Org Viewer</title>
+  <link rel="stylesheet" href="../styles/github-theme.css">
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body class="welcome-body">
+  <div class="welcome-container">
+    <header class="welcome-header">
+      <img src="../../../icons/icon128.png" alt="Org Viewer Logo" class="welcome-logo">
+      <h1 class="welcome-title">Welcome to Org Viewer</h1>
+      <p class="welcome-subtitle">A modern, beautiful, and secure Org-mode previewer directly inside Google Chrome.</p>
+    </header>
+
+    <div class="welcome-cards">
+      <!-- Step 1: File URL Access -->
+      <div class="welcome-card" id="card-file-access">
+        <div class="step-badge">Step 1</div>
+        <h2>Enable Local File Access</h2>
+        <p>Chrome requires manual user consent before any extension can read local <code>file:///</code> URLs. Without this permission, clicking local <code>.org</code> files cannot be rendered.</p>
+        
+        <div class="status-box" id="file-access-status">
+          <span class="status-indicator checking"></span>
+          <span id="file-access-text">Checking permission status...</span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" id="btn-open-extensions">Open Chrome Extension Settings</button>
+        </div>
+
+        <div class="instruction-box">
+          <ol>
+            <li>Click the button above (or navigate to <code>chrome://extensions</code>).</li>
+            <li>Find <strong>Org Viewer</strong> and click <strong>Details</strong>.</li>
+            <li>Scroll down and toggle ON <strong>"Allow access to file URLs"</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Step 2: Try It Out -->
+      <div class="welcome-card">
+        <div class="step-badge">Step 2</div>
+        <h2>Try It Out</h2>
+        <p>Once enabled, you can open any <code>.org</code> file on your computer by dragging it into Chrome, or double-clicking it if Chrome is your default viewer.</p>
+        
+        <div class="action-row">
+          <button class="btn btn-secondary" id="btn-download-sample">Download Sample .org File</button>
+          <a class="btn btn-secondary" href="../viewer/viewer.html" target="_blank">Open Drag & Drop Viewer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="welcome.js"></script>
+</body>
+</html>

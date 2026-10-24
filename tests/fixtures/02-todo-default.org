@@ -1,0 +1,7 @@
+* TODO Task 1
+* NEXT Task 2
+* STARTED Task 3
+* WAITING Task 4
+* HOLD Task 5
+* DONE Finished Task
+* CANCELLED Abandoned Task
