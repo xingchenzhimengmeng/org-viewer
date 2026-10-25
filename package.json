@@ -1,10 +1,16 @@
 {
   "scripts": {
     "build": "node build.js",
-    "test": "node run-tests.js"
+    "test": "node run-tests.js",
+    "test:e2e": "node tests/e2e/extension.spec.js && node tests/e2e/layout.spec.js",
+    "serve": "node test-server.cjs"
   },
   "name": "org-viewer",
   "type": "module",
   "description": "A clean and modern Org-mode document viewer for Google Chrome.",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "devDependencies": {
+    "jszip": "^3.10.1",
+    "typescript": "^5.6.3"
+  }
 }

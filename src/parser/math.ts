@@ -42,8 +42,22 @@ const GREEK_AND_SYMBOLS: Record<string, string> = {
   partial: '∂', nabla: '∇', infty: '∞', prime: '′',
 
   // Dots & Spaces
-  ldots: '…', cdots: '⋯', ddots: '⋱', vdots: '⋮',
+  ldots: '…', cdots: '⋯', ddots: '⋱', vdots: '⋮', dots: '…',
   quad: '    ', qquad: '        '
+};
+
+// Accents rendered as <mover> with a Unicode accent character.
+const ACCENTS: Record<string, { char: string; stretchy: boolean }> = {
+  hat: { char: 'ˆ', stretchy: false },
+  widehat: { char: 'ˆ', stretchy: true },
+  tilde: { char: '˜', stretchy: false },
+  widetilde: { char: '˜', stretchy: true },
+  bar: { char: '‾', stretchy: true },
+  overline: { char: '‾', stretchy: true },
+  vec: { char: '→', stretchy: true },
+  dot: { char: '˙', stretchy: false },
+  ddot: { char: '¨', stretchy: false },
+  check: { char: 'ˇ', stretchy: false }
 };
 
 const MATH_FUNCS = new Set([
@@ -122,6 +136,14 @@ class TeXParser {
         const num = this.parseGroup();
         const den = this.parseGroup();
         return `<mfrac><mrow>${num}</mrow><mrow>${den}</mrow></mfrac>`;
+      }
+
+      // Accents: \hat{y}, \overline{x}, \vec{v}, ...
+      const accent = ACCENTS[cmd];
+      if (accent) {
+        const base = this.parseGroup();
+        const stretchy = accent.stretchy ? ' stretchy="true"' : '';
+        return `<mover><mrow>${base}</mrow><mo accent="true"${stretchy}>${accent.char}</mo></mover>`;
       }
 
       // Check square root \sqrt[n]{x} or \sqrt{x}

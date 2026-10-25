@@ -138,5 +138,44 @@
   },
   "statusDisabled": {
     "message": "状态：未开启。请点击“前往设置”开启“允许访问文件网址”。"
+  },
+  "popupReady": {
+    "message": "可预览 .org 文件"
+  },
+  "popupRenderCurrent": {
+    "message": "渲染当前 .org 文件"
+  },
+  "popupOpenViewer": {
+    "message": "打开预览器"
+  },
+  "popupChooseOrg": {
+    "message": "选择 .org 文件"
+  },
+  "popupLocalAccess": {
+    "message": "本地文件权限"
+  },
+  "popupAccessEnabled": {
+    "message": "已开启"
+  },
+  "popupAccessDisabled": {
+    "message": "未开启"
+  },
+  "popupEnableAccess": {
+    "message": "开启本地文件权限"
+  },
+  "popupManageAccess": {
+    "message": "管理"
+  },
+  "popupSettings": {
+    "message": "设置"
+  },
+  "popupOnlyOrg": {
+    "message": "仅支持 .org 文件。"
+  },
+  "popupRendering": {
+    "message": "正在渲染..."
+  },
+  "popupRenderComplete": {
+    "message": "当前页面已渲染完成。"
   }
 }

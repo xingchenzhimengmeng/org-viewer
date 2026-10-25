@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # Org Viewer - Chrome Extension
 
@@ -88,12 +88,13 @@ However, viewing `.org` notes outside Emacs has always been painful:
 - Open any blank tab in Chrome and drag your `.org` file directly into the browser window. The file will instantly render into a formatted article.
 
 #### Option C: Use the Standalone Extension Viewer
-- Click the **Org Viewer** icon in your Chrome toolbar.
-- A clean standalone workspace will open, where you can:
-  - **Drag and drop** a file into the dotted drop zone;
-  - Click **"Choose File"** to browse your computer;
+- Click the **Org Viewer** icon in your Chrome toolbar to open its compact action popup:
+  - Use **"Render this .org file"** when the active tab is an Org document;
+  - Use **"Choose .org file"** to preview a local file without first enabling file URL access;
+  - Use **"Open viewer"** for the full-screen workspace;
+  - **Drag and drop** a file into the viewer's dotted drop zone;
   - Click **"Load Sample"** to instantly test all formatting features;
-  - **Paste raw Org text** directly into the textarea and click "Render Org Text".
+  - **Paste raw Org text** directly into the workspace textarea and click "Render Org Text".
 
 ---
 
@@ -107,7 +108,7 @@ A sticky top toolbar is provided on every rendered page with one-click actions:
 | **Raw Source** | Instantly toggles between the rendered document and raw Org-mode plain text. |
 | **Outline** | Shows or hides the floating left-hand Table of Contents sidebar. |
 | **Collapse All** | Collapses all document sections at once; click again to expand all. |
-| **Theme** | Cycles between System Theme → Light Theme → Dark Theme. |
+| **Theme** | Cycles between System Theme → Light Theme → Dark Theme → Phycat Theme. |
 | **Print Document** | A4/Letter-optimized print layout. Automatically strips toolbars and expands all sections for clean PDF export. |
 
 ---
@@ -126,6 +127,7 @@ A sticky top toolbar is provided on every rendered page with one-click actions:
 ### 3. Dynamic Outline Table of Contents (TOC)
 - Automatically parses all document headings and generates a hierarchical outline in the sidebar.
 - **Scroll-Spy Tracking**: As you scroll through the article, the corresponding section in the sidebar highlights dynamically.
+- **Resizable Sidebar**: Drag the divider between the outline and the article to set any outline width you like (20% of the window by default). Double-click the divider or press `Home` to restore the default; arrow keys nudge it when the divider is focused.
 - **Smooth Navigation**: Clicking any outline entry smoothly scrolls to that section. If the target section is folded, it automatically unfolds so content is immediately visible.
 
 ### 4. Full Org-mode Core Syntax Coverage
@@ -171,6 +173,9 @@ A sticky top toolbar is provided on every rendered page with one-click actions:
 ### 6. Light/Dark Themes & Print/PDF Export
 - **Dark Theme**: Eye-friendly dark palette (`#0d1117`) with customized code block, badge, and table borders.
 - **Light Theme**: Clean GitHub-style white paper styling.
+- **Phycat Theme**: An optional literary theme inspired by the Typora "Phycat" theme (sky-blue accents, gradient ribbon headings, paper texture). Switch it on in Settings or via the toolbar Theme button; the default appearance is unchanged.
+- **Editor-Grade Code Blocks**: VSCode Light+/Dark+ token palettes with a line-number gutter, covering Python, JavaScript/TypeScript, Java, C/C++/C#, Go, Rust, Kotlin, Ruby, PHP, SQL, Bash, JSON, HTML, CSS, YAML and Emacs Lisp.
+- **Images**: `[[image.png]]` links render as centered figures with optional `[[path][caption]]` or `#+CAPTION` text; unresolvable sources fall back to a labelled placeholder.
 - **Print / PDF Export**: Press `Ctrl + P` or click "Print Document" to generate clean, professional documents with all navigation elements automatically hidden.
 
 ---
@@ -242,7 +247,7 @@ chrome_extension/
 ## 🛠️ Developer Guide (Build & Test)
 
 ### Run the Automated Test Suite
-The test suite includes 32 tests covering syntax parsing, XSS sanitization, and language detection:
+The test suite includes 37 tests covering syntax parsing, XSS sanitization, language detection, manifest permissions, packaged assets, and `.org` file recognition:
 ```bash
 npm test
 ```
@@ -253,6 +258,12 @@ The build script compiles TypeScript, bundles the self-contained execution packa
 npm run build
 ```
 The output package is only **~70 KB**, making it exceptionally fast to load.
+
+### Publishing a Release
+1. Bump `version` in `manifest.json` (and the version label in `src/ui/popup/popup.html`), then run `npm run build` and `npm test`.
+2. Commit, tag and push: `git tag -a v1.1.0 -m "Release v1.1.0" && git push origin main --tags`.
+3. The `release.yml` workflow then builds `dist/org-viewer-v<version>.zip` from the tag and publishes it as a GitHub Release asset. To release manually instead, run `gh release create v1.1.0 dist/org-viewer-v1.1.0.zip --title "v1.1.0" --notes "..."` or use Releases - Draft a new release in the web UI.
+4. The same zip uploads directly to the Chrome Web Store Developer Dashboard: `manifest.json` sits at the zip root.
 
 ---
 

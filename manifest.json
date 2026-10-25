@@ -10,13 +10,13 @@
     "128": "icons/icon128.png"
   },
   "action": {
+    "default_popup": "src/ui/popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Org Viewer",
-    "default_popup": "src/ui/viewer/viewer.html"
+    "default_title": "Org Viewer"
   },
   "background": {
     "service_worker": "src/background/index.js",
@@ -28,14 +28,14 @@
   },
   "permissions": [
     "storage",
-    "scripting"
+    "scripting",
+    "activeTab"
   ],
-  "optional_permissions": [
-    "tabs"
+  "host_permissions": [
+    "file:///*"
   ],
   "optional_host_permissions": [
-    "*://*/*.org*",
-    "*://*/*.ORG*"
+    "*://*/*"
   ],
   "content_scripts": [
     {
@@ -46,17 +46,6 @@
         "src/content/detector.js"
       ],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "src/content/renderer.js",
-        "src/ui/styles/*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
     }
   ]
 }

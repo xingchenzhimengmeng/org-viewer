@@ -1,4 +1,4 @@
-﻿/* Org Viewer GitHub-style Typography and Elements */
+/* Org Viewer GitHub-style Typography and Elements */
 
 :root {
   --org-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -8,7 +8,7 @@
   --org-fg: #1f2328;
   --org-fg-muted: #656d76;
   --org-border: #d0d7de;
-  --org-border-muted: #hsla(210,18%,87%,1);
+  --org-border-muted: hsla(210, 18%, 87%, 1);
   --org-canvas-subtle: #f6f8fa;
   --org-accent: #0969da;
   --org-accent-subtle: #ddf4ff;
@@ -23,7 +23,25 @@
   --org-tag-fg: #454c54;
   
   --org-code-bg: rgba(175, 184, 193, 0.2);
-  --org-sidebar-width: 280px;
+  /* Outline sidebar default: 20% of the viewport width, clamped to usable bounds. */
+  --org-sidebar-width: clamp(180px, 20vw, 420px);
+
+  /* Code editor palette (VSCode Light+ tokens) */
+  --org-editor-bg: #ffffff;
+  --org-editor-fg: #1f2328;
+  --org-editor-border: #d0d7de;
+  --org-editor-header-bg: #f6f8fa;
+  --org-editor-line-no: #6e7781;
+  --org-tok-keyword: #0000ff;
+  --org-tok-string: #a31515;
+  --org-tok-comment: #008000;
+  --org-tok-number: #098658;
+  --org-tok-type: #267f99;
+  --org-tok-func: #795e26;
+  --org-tok-attr: #ff0000;
+  --org-tok-meta: #795e26;
+  --org-tok-variable: #001080;
+  --org-tok-punct: #57606a;
 }
 
 body.org-theme-dark {
@@ -46,9 +64,32 @@ body.org-theme-dark {
   --org-tag-fg: #8b949e;
   
   --org-code-bg: rgba(110, 118, 129, 0.4);
+
+  /* Code editor palette (VSCode Dark+ tokens) */
+  --org-editor-bg: #1e1e1e;
+  --org-editor-fg: #d4d4d4;
+  --org-editor-border: #333333;
+  --org-editor-header-bg: #252526;
+  --org-editor-line-no: #6e7681;
+  --org-tok-keyword: #569cd6;
+  --org-tok-string: #ce9178;
+  --org-tok-comment: #6a9955;
+  --org-tok-number: #b5cea8;
+  --org-tok-type: #4ec9b0;
+  --org-tok-func: #dcdcaa;
+  --org-tok-attr: #9cdcfe;
+  --org-tok-meta: #dcdcaa;
+  --org-tok-variable: #9cdcfe;
+  --org-tok-punct: #d4d4d4;
 }
 
 /* Reset and Layout */
+/* Host pages (Chrome's plain-text view) keep UA body margins; normalize once mounted. */
+body.org-viewer-mounted {
+  margin: 0;
+  background-color: var(--org-bg);
+}
+
 .org-viewer-root {
   font-family: var(--org-font-family);
   font-size: 16px;
@@ -116,6 +157,21 @@ body.org-theme-dark {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Keep the 48px bar on one row for phone-width windows. */
+@media (max-width: 700px) {
+  .org-topbar {
+    padding: 0 8px;
+  }
+
+  .org-topbar-right .org-btn span {
+    display: none;
+  }
+
+  .org-doc-badge {
+    display: none;
+  }
 }
 
 .org-btn {
@@ -364,25 +420,51 @@ code.org-code, code.org-verbatim {
   background-color: var(--org-code-bg);
 }
 
-.org-src-block, .org-example, .org-export-block {
+.org-src-block, .org-export-block {
   margin: 16px 0;
-  border: 1px solid var(--org-border);
-  border-radius: 6px;
-  background-color: var(--org-canvas-subtle);
+  border: 1px solid var(--org-editor-border);
+  border-radius: 8px;
+  background-color: var(--org-editor-bg);
   overflow: hidden;
 }
 
 .org-src-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 6px 12px;
+  font-family: var(--org-mono-font);
   font-size: 11px;
   font-weight: 600;
   color: var(--org-fg-muted);
-  border-bottom: 1px solid var(--org-border);
+  background-color: var(--org-editor-header-bg);
+  border-bottom: 1px solid var(--org-editor-border);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.org-src-block pre, .org-example code, .org-export-block pre {
+.org-src-block pre, .org-export-block pre {
+  margin: 0;
+  padding: 12px 14px 14px 0;
+  font-family: var(--org-mono-font);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  background-color: var(--org-editor-bg);
+  color: var(--org-editor-fg);
+}
+
+.org-example {
+  margin: 16px 0;
+  border: 1px solid var(--org-border);
+  border-radius: 8px;
+  background-color: var(--org-canvas-subtle);
+  overflow: hidden;
+}
+
+.org-example code {
+  display: block;
   margin: 0;
   padding: 16px;
   font-family: var(--org-mono-font);
@@ -392,20 +474,69 @@ code.org-code, code.org-verbatim {
   white-space: pre;
 }
 
-/* Syntax Highlighting Tokens */
-.hljs-keyword { color: #cf222e; font-weight: 600; }
-.hljs-string { color: #0a3069; }
-.hljs-comment { color: #6e7781; font-style: italic; }
-.hljs-number { color: #0550ae; }
-.hljs-built_in { color: #953800; }
-.hljs-title { color: #8250df; }
+/* Editor-style line number gutter */
+.org-src-block pre code {
+  counter-reset: org-code-line;
+}
 
-body.org-theme-dark .hljs-keyword { color: #ff7b72; font-weight: 600; }
-body.org-theme-dark .hljs-string { color: #a5d6ff; }
-body.org-theme-dark .hljs-comment { color: #8b949e; font-style: italic; }
-body.org-theme-dark .hljs-number { color: #79c0ff; }
-body.org-theme-dark .hljs-built_in { color: #ffa657; }
-body.org-theme-dark .hljs-title { color: #d2a8ff; }
+.org-code-line {
+  display: block;
+  min-height: 1.6em;
+  padding-left: 3.6em;
+  position: relative;
+}
+
+.org-code-line::before {
+  counter-increment: org-code-line;
+  content: counter(org-code-line);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.6em;
+  padding-right: 1em;
+  text-align: right;
+  color: var(--org-editor-line-no);
+  user-select: none;
+  pointer-events: none;
+}
+
+.org-block-caption {
+  margin: 14px 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--org-fg-muted);
+}
+
+/* Syntax Highlighting Tokens (VSCode Light+/Dark+ palettes via variables) */
+.hljs-keyword { color: var(--org-tok-keyword); }
+.hljs-string { color: var(--org-tok-string); }
+.hljs-comment { color: var(--org-tok-comment); font-style: italic; }
+.hljs-number { color: var(--org-tok-number); }
+.hljs-built_in { color: var(--org-tok-type); }
+.hljs-title { color: var(--org-tok-func); }
+.hljs-attr { color: var(--org-tok-attr); }
+.hljs-meta { color: var(--org-tok-meta); }
+.hljs-variable { color: var(--org-tok-variable); }
+.hljs-punctuation { color: var(--org-tok-punct); }
+
+/* Unresolvable image placeholder (e.g. relative paths in the standalone viewer) */
+.org-image-missing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px dashed var(--org-border);
+  border-radius: 8px;
+  background-color: var(--org-canvas-subtle);
+  color: var(--org-fg-muted);
+  font-size: 12px;
+  font-family: var(--org-mono-font);
+}
+
+.org-image-missing svg {
+  flex-shrink: 0;
+}
 
 /* Tables */
 .org-table-wrapper {
@@ -546,6 +677,37 @@ math[display="block"] {
   height: 1px;
   background-color: var(--org-border);
   margin: 24px 0;
+}
+
+/* Center block */
+.org-center {
+  text-align: center;
+  margin: 16px 0;
+}
+
+/* Include card */
+.org-include-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin: 10px 0;
+  background-color: var(--org-canvas-subtle);
+  border: 1px dashed var(--org-border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.org-include-badge {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--org-accent);
+  letter-spacing: 0.5px;
+}
+
+.org-include-path {
+  font-family: var(--org-mono-font);
+  color: var(--org-fg-muted);
 }
 
 /* Large File Warning Banner */

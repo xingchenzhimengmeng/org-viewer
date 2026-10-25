@@ -1,8 +1,10 @@
 ﻿declare namespace chrome {
   namespace runtime {
     const id: string;
+    const lastError: { message?: string } | undefined;
     function getURL(path: string): string;
-    function sendMessage(message: any, responseCallback?: (response: any) => void): void;
+    function sendMessage(message: any, responseCallback?: (response: any) => void): Promise<any>;
+    function openOptionsPage(): Promise<void>;
     const onInstalled: {
       addListener(callback: (details: { reason: string; previousVersion?: string }) => void): void;
     };
@@ -17,10 +19,28 @@
 
   namespace tabs {
     function create(createProperties: { url?: string; active?: boolean }): Promise<any>;
+    function sendMessage(tabId: number, message: any): Promise<any>;
+    function query(queryInfo: {
+      active?: boolean;
+      currentWindow?: boolean;
+    }): Promise<Array<{ id?: number; url?: string; title?: string }>>;
+    const onUpdated: {
+      addListener(callback: (
+        tabId: number,
+        changeInfo: { status?: string },
+        tab: { url?: string }
+      ) => void): void;
+    };
+  }
+
+  namespace action {
+    const onClicked: {
+      addListener(callback: (tab: { id?: number; url?: string }) => void): void;
+    };
   }
 
   namespace scripting {
-    function insertCSS(details: { target: { tabId: number }; files?: string[]; css?: string }): Promise<void>;
+    function insertCSS(details: { target: { tabId: number }; files?: string[]; code?: string }): Promise<void>;
     function executeScript(details: { target: { tabId: number }; files?: string[]; func?: (...args: any[]) => any }): Promise<any[]>;
   }
 

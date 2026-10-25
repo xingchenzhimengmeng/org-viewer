@@ -7,10 +7,11 @@
 import { SupportedLanguage, detectDefaultLanguage, setActiveLanguage } from './i18n.js';
 
 export interface UserSettings {
-  theme: 'system' | 'light' | 'dark';
+  theme: 'system' | 'light' | 'dark' | 'phycat';
   defaultTocExpanded: boolean;
   webRenderingEnabled: boolean;
   language: SupportedLanguage;
+  sidebarWidth: number;
 }
 
 function getDefaultSettings(): UserSettings {
@@ -18,7 +19,8 @@ function getDefaultSettings(): UserSettings {
     theme: 'system',
     defaultTocExpanded: true,
     webRenderingEnabled: false,
-    language: detectDefaultLanguage()
+    language: detectDefaultLanguage(),
+    sidebarWidth: 0
   };
 }
 
@@ -26,12 +28,13 @@ export async function getSettings(): Promise<UserSettings> {
   const defaults = getDefaultSettings();
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     try {
-      const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language']);
+      const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language', 'sidebarWidth']);
       const settings: UserSettings = {
         theme: res.theme ?? defaults.theme,
         defaultTocExpanded: res.defaultTocExpanded ?? defaults.defaultTocExpanded,
         webRenderingEnabled: res.webRenderingEnabled ?? defaults.webRenderingEnabled,
-        language: res.language ?? defaults.language
+        language: res.language ?? defaults.language,
+        sidebarWidth: typeof res.sidebarWidth === 'number' ? res.sidebarWidth : defaults.sidebarWidth
       };
       setActiveLanguage(settings.language);
       return settings;

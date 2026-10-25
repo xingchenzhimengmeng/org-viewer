@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Org Viewer Build & Packaging Script.
  * Compiles TypeScript, bundles self-contained content scripts, and creates a store zip.
  */
@@ -8,39 +8,59 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
+function resolveTscPath() {
+  const candidates = [
+    'node_modules/typescript/bin/tsc',
+    'C:/projects/ts_work/ts-node-workspace/node_modules/typescript/bin/tsc'
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error('TypeScript compiler not found. Run `npm install` first.');
+}
 
-const TSC_PATH = 'C:/projects/ts_work/ts-node-workspace/node_modules/typescript/bin/tsc';
+const TSC_PATH = resolveTscPath();
+const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+const DIST_NAME = `org-viewer-v${manifest.version}`;
+
+
+console.log('[0/4] Ensuring stylesheets are BOM-free (insertCSS injects them verbatim)...');
+function collectCssFiles(dirPath) {
+  return fs.readdirSync(dirPath, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) return collectCssFiles(fullPath);
+    return entry.name.endsWith('.css') ? [fullPath] : [];
+  });
+}
+for (const cssFile of collectCssFiles('src')) {
+  const bytes = fs.readFileSync(cssFile);
+  if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+    fs.writeFileSync(cssFile, bytes.subarray(3));
+    console.log('  stripped UTF-8 BOM: ' + cssFile);
+  }
+}
 
 console.log('[1/4] Compiling TypeScript...');
 execSync(`node "${TSC_PATH}"`, { stdio: 'inherit' });
 
 console.log('[2/4] Bundling content/renderer.js into a self-contained execution script...');
 
+function cleanModule(code) {
+  return code
+    .replace(/^\s*import\s+[^;]+;?/gm, '')
+    .replace(/^\s*export\s+(?:default\s+)?/gm, '');
+}
+
 // Read dependencies for renderer.js
-const todoCode = fs.readFileSync('src/parser/todo.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const sanitizeCode = fs.readFileSync('src/parser/sanitize.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const highlighterCode = fs.readFileSync('src/parser/highlighter.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const mathCode = fs.readFileSync('src/parser/math.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const compilerCode = fs.readFileSync('src/parser/compiler.js', 'utf8')
-  .replace(/import\s+{[^}]+}\s+from\s+['"][^'"]+['"];?/g, '')
-  .replace(/export\s+/g, '');
-
-const storageCode = fs.readFileSync('src/utils/storage.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const i18nCode = fs.readFileSync('src/utils/i18n.js', 'utf8')
-  .replace(/export\s+/g, '');
-
-const rendererCode = fs.readFileSync('src/content/renderer.js', 'utf8')
-  .replace(/import\s+{[^}]+}\s+from\s+['"][^'"]+['"];?/g, '');
+const todoCode = cleanModule(fs.readFileSync('src/parser/todo.js', 'utf8'));
+const sanitizeCode = cleanModule(fs.readFileSync('src/parser/sanitize.js', 'utf8'));
+const highlighterCode = cleanModule(fs.readFileSync('src/parser/highlighter.js', 'utf8'));
+const mathCode = cleanModule(fs.readFileSync('src/parser/math.js', 'utf8'));
+const compilerCode = cleanModule(fs.readFileSync('src/parser/compiler.js', 'utf8'));
+const storageCode = cleanModule(fs.readFileSync('src/utils/storage.js', 'utf8'));
+const i18nCode = cleanModule(fs.readFileSync('src/utils/i18n.js', 'utf8'));
+const shellCode = cleanModule(fs.readFileSync('src/ui/shell.js', 'utf8'));
+const rendererCode = cleanModule(fs.readFileSync('src/content/renderer.js', 'utf8'));
 
 const bundledRenderer = `/**
  * Org Viewer In-Place Renderer Bundle (Self-Contained)
@@ -68,6 +88,9 @@ const bundledRenderer = `/**
   // --- i18n.js ---
   ${i18nCode}
 
+  // --- shell.js ---
+  ${shellCode}
+
   // --- renderer.js ---
   ${rendererCode}
 })();
@@ -77,7 +100,6 @@ fs.writeFileSync('src/content/renderer.js', bundledRenderer, 'utf8');
 console.log('src/content/renderer.js bundled successfully (size: ' + (bundledRenderer.length / 1024).toFixed(1) + ' KB)');
 
 console.log('[3/4] Verifying extension package integrity...');
-const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
 const requiredFiles = [
   'manifest.json',
   'src/background/index.js',
@@ -86,6 +108,9 @@ const requiredFiles = [
   'src/ui/styles/github-theme.css',
   'src/ui/styles/toc.css',
   'src/ui/styles/print.css',
+  'src/ui/popup/popup.html',
+  'src/ui/popup/popup.js',
+  'src/ui/popup/popup.css',
   'src/ui/welcome/welcome.html',
   'src/ui/welcome/welcome.js',
   'src/ui/viewer/viewer.html',
@@ -106,44 +131,62 @@ for (const f of requiredFiles) {
 }
 console.log('All ' + requiredFiles.length + ' required extension files verified.');
 
-console.log('[4/4] Creating distribution ZIP for Chrome Web Store...');
+console.log('[4/4] Creating unpacked and ZIP distributions...');
 if (!fs.existsSync('dist')) {
-  fs.mkdirSync('dist');
+  fs.mkdirSync('dist', { recursive: true });
 }
 
-// We can use node_modules jszip from codex-primary-runtime or PowerShell Compress-Archive
+let JSZip;
 try {
-  const JSZip = require('C:/Users/qin23/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/jszip');
-  const zip = new JSZip();
+  JSZip = require('jszip');
+} catch {
+  // Fallback for machines without a local node_modules install.
+  JSZip = require('C:/Users/qin23/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/jszip');
+}
+const zip = new JSZip();
+const releaseFiles = [{
+  relativePath: 'manifest.json',
+  contents: fs.readFileSync('manifest.json')
+}];
 
-  function addDirToZip(dirPath, zipFolder) {
-    const items = fs.readdirSync(dirPath);
-    for (const item of items) {
-      if (item === 'node_modules' || item === '.git' || item === 'dist' || item === 'tests' || item.endsWith('.ts')) continue;
-      const fullPath = path.join(dirPath, item);
-      const stat = fs.statSync(fullPath);
-      if (stat.isDirectory()) {
-        addDirToZip(fullPath, zipFolder.folder(item));
-      } else {
-        zipFolder.file(item, fs.readFileSync(fullPath));
-      }
+function collectReleaseFiles(dirPath, relativeRoot = '') {
+  for (const item of fs.readdirSync(dirPath)) {
+    if (item === 'node_modules' || item === '.git' || item.endsWith('.ts')) continue;
+    const fullPath = path.join(dirPath, item);
+    const relativePath = path.posix.join(relativeRoot, item);
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      collectReleaseFiles(fullPath, relativePath);
+    } else {
+      releaseFiles.push({ relativePath, contents: fs.readFileSync(fullPath) });
     }
   }
-
-  // Include only release extension files
-  const rootFiles = ['manifest.json'];
-  for (const rf of rootFiles) {
-    zip.file(rf, fs.readFileSync(rf));
-  }
-  addDirToZip('icons', zip.folder('icons'));
-  addDirToZip('_locales', zip.folder('_locales'));
-  addDirToZip('src', zip.folder('src'));
-
-  const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
-  fs.writeFileSync('dist/org-viewer-v1.0.0.zip', zipBuffer);
-  console.log('Created dist/org-viewer-v1.0.0.zip (size: ' + (zipBuffer.length / 1024).toFixed(1) + ' KB)');
-} catch (err) {
-  console.warn('JSZip failed, falling back to powershell Compress-Archive:', err.message);
 }
+
+collectReleaseFiles('icons', 'icons');
+collectReleaseFiles('_locales', '_locales');
+collectReleaseFiles('src', 'src');
+
+for (const file of releaseFiles) {
+  zip.file(file.relativePath, file.contents);
+}
+
+const distRoot = path.resolve('dist');
+const unpackedDir = path.resolve(distRoot, DIST_NAME);
+if (path.dirname(unpackedDir) !== distRoot) {
+  throw new Error(`Refusing to clean unexpected distribution path: ${unpackedDir}`);
+}
+fs.rmSync(unpackedDir, { recursive: true, force: true });
+fs.mkdirSync(unpackedDir, { recursive: true });
+
+for (const file of releaseFiles) {
+  const outputPath = path.join(unpackedDir, file.relativePath);
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, file.contents);
+}
+
+const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+fs.writeFileSync(path.join('dist', `${DIST_NAME}.zip`), zipBuffer);
+console.log(`Created dist/${DIST_NAME}/ and dist/${DIST_NAME}.zip`);
 
 console.log('Build completed successfully!');

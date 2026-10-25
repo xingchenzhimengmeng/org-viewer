@@ -50,7 +50,22 @@
 
   function triggerRenderer() {
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-      chrome.runtime.sendMessage({ type: 'ORG_DETECTED' });
+      chrome.runtime.sendMessage({ type: 'ORG_DETECTED' }, (response) => {
+        if (chrome.runtime.lastError || !response?.success) {
+          showRenderError(chrome.runtime.lastError?.message || response?.error || 'Unknown error');
+        }
+      });
     }
+  }
+
+  function showRenderError(reason: string) {
+    if (document.getElementById('org-viewer-render-error')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'org-viewer-render-error';
+    banner.style.cssText =
+      'position:fixed;top:0;left:0;right:0;padding:12px 20px;background:#ffebe9;color:#82071e;border-bottom:1px solid #ff8182;font-family:sans-serif;font-size:14px;z-index:999999;';
+    banner.textContent = `Org Viewer could not render this file: ${reason}`;
+    document.body.prepend(banner);
   }
 })();

@@ -1,4 +1,4 @@
-﻿/* Table of Contents (Outline) Sidebar */
+/* Table of Contents (Outline) Sidebar */
 
 .org-toc-sidebar {
   position: sticky;
@@ -19,6 +19,56 @@
   margin-left: calc(-1 * var(--org-sidebar-width));
   opacity: 0;
   pointer-events: none;
+}
+
+/* Vertical drag handle between outline and content */
+.org-sidebar-resizer {
+  flex-shrink: 0;
+  width: 7px;
+  margin-left: -4px;
+  position: relative;
+  z-index: 101;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.org-sidebar-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 2px;
+  border-radius: 1px;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.org-sidebar-resizer:hover::after,
+.org-sidebar-resizer:focus-visible::after,
+.org-sidebar-resizer.org-resizer-active::after {
+  background-color: var(--org-accent);
+}
+
+.org-sidebar-resizer:focus-visible {
+  outline: none;
+}
+
+body.org-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.org-resizing iframe,
+body.org-resizing .org-content-container {
+  pointer-events: none;
+}
+
+.org-toc-sidebar.org-toc-hidden + .org-sidebar-resizer {
+  display: none;
 }
 
 .org-toc-header {
@@ -74,18 +124,13 @@
 .org-toc-level-5 { padding-left: 48px; }
 .org-toc-level-6 { padding-left: 60px; }
 
-@media (max-width: 640px) {
-  .org-toc-sidebar {
-    position: fixed;
-    left: 0;
-    top: 48px;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
-  }
-}
+/* Todo badges inside outline entries */
+.org-toc-badge {
   font-size: 10px;
   padding: 1px 4px;
   border-radius: 3px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 @media (max-width: 960px) {
@@ -95,5 +140,9 @@
     top: 48px;
     z-index: 999;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .org-sidebar-resizer {
+    display: none;
   }
 }

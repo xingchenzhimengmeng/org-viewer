@@ -90,7 +90,7 @@ const ALLOWED_ATTRS = {
     'rect': new Set(['x', 'y', 'width', 'height', 'rx', 'ry']),
     // MathML attributes
     'math': new Set(['xmlns', 'display']),
-    'mo': new Set(['stretchy', 'fence', 'separator', 'lspace', 'rspace']),
+    'mo': new Set(['stretchy', 'fence', 'separator', 'lspace', 'rspace', 'accent']),
     'mtable': new Set(['columnalign', 'rowalign']),
     'mtd': new Set(['columnalign', 'rowalign']),
     'mtext': new Set(['mathvariant'])
@@ -204,6 +204,7 @@ function escapeHtml(text) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
+const C_FAMILY_COMMENTS = { commentSingle: '//', commentMultiStart: '/*', commentMultiEnd: '*/' };
 const LANGUAGES = {
     javascript: {
         keywords: new Set([
@@ -211,12 +212,11 @@ const LANGUAGES = {
             'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'finally',
             'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'return',
             'super', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while',
-            'with', 'yield', 'true', 'false', 'null', 'undefined'
+            'with', 'yield', 'true', 'false', 'null', 'undefined', 'of', 'from', 'static', 'get', 'set'
         ]),
-        builtins: new Set(['console', 'window', 'document', 'Math', 'JSON', 'Array', 'Object', 'Promise', 'Set', 'Map', 'String', 'Number', 'Boolean']),
-        commentSingle: '//',
-        commentMultiStart: '/*',
-        commentMultiEnd: '*/'
+        builtins: new Set(['console', 'window', 'document', 'Math', 'JSON', 'Array', 'Object', 'Promise', 'Set', 'Map', 'String', 'Number', 'Boolean', 'fetch', 'setTimeout', 'parseInt', 'parseFloat']),
+        types: new Set(['Error', 'TypeError', 'RegExp', 'Date', 'Symbol', 'Iterable', 'HTMLElement']),
+        ...C_FAMILY_COMMENTS,
     },
     typescript: {
         keywords: new Set([
@@ -225,22 +225,144 @@ const LANGUAGES = {
             'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'return',
             'super', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while',
             'with', 'yield', 'true', 'false', 'null', 'undefined', 'type', 'interface',
-            'enum', 'implements', 'declare', 'namespace', 'readonly', 'as', 'any', 'unknown', 'never'
+            'enum', 'implements', 'declare', 'namespace', 'readonly', 'as', 'any', 'unknown',
+            'never', 'satisfies', 'keyof', 'infer', 'is', 'of', 'from', 'static', 'public', 'private', 'protected', 'abstract'
         ]),
-        builtins: new Set(['console', 'window', 'document', 'Math', 'JSON', 'Array', 'Object', 'Promise', 'Set', 'Map', 'Record', 'Partial']),
-        commentSingle: '//',
-        commentMultiStart: '/*',
-        commentMultiEnd: '*/'
+        builtins: new Set(['console', 'window', 'document', 'Math', 'JSON', 'Array', 'Object', 'Promise', 'Set', 'Map', 'Record', 'Partial', 'Required', 'Omit', 'Pick']),
+        types: new Set(['string', 'number', 'boolean', 'symbol', 'bigint', 'object', 'void', 'Error', 'RegExp', 'Date']),
+        ...C_FAMILY_COMMENTS,
     },
     python: {
         keywords: new Set([
             'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break',
             'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally',
             'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal',
-            'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'
+            'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield', 'match', 'case'
         ]),
-        builtins: new Set(['print', 'len', 'range', 'int', 'str', 'list', 'dict', 'set', 'tuple', 'open', 'type', 'super', 'map', 'filter']),
+        builtins: new Set(['print', 'len', 'range', 'int', 'str', 'list', 'dict', 'set', 'tuple', 'open', 'type', 'super', 'map', 'filter', 'zip', 'enumerate', 'sorted', 'sum', 'min', 'max', 'abs', 'isinstance', 'self', 'cls']),
+        types: new Set(['Exception', 'ValueError', 'TypeError', 'KeyError', 'IndexError', 'Optional', 'List', 'Dict', 'Tuple', 'Set', 'Any', 'Union']),
         commentSingle: '#'
+    },
+    java: {
+        keywords: new Set([
+            'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class',
+            'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extends', 'final',
+            'finally', 'float', 'for', 'goto', 'if', 'implements', 'import', 'instanceof', 'int',
+            'interface', 'long', 'native', 'new', 'package', 'private', 'protected', 'public',
+            'return', 'short', 'static', 'strictfp', 'super', 'switch', 'synchronized', 'this',
+            'throw', 'throws', 'transient', 'try', 'void', 'volatile', 'while', 'true', 'false',
+            'null', 'var', 'record', 'sealed', 'permits', 'yield'
+        ]),
+        builtins: new Set(['System', 'Math', 'Integer', 'Double', 'Boolean', 'Character', 'Thread', 'Runnable', 'Exception', 'Override', 'FunctionalInterface', 'println', 'printf', 'length', 'toString', 'equals', 'hashCode']),
+        types: new Set(['String', 'Object', 'List', 'Map', 'Set', 'ArrayList', 'HashMap', 'HashSet', 'Optional', 'Stream', 'Collection', 'Iterable', 'Comparable', 'Long', 'Float', 'Byte', 'Short']),
+        ...C_FAMILY_COMMENTS
+    },
+    c: {
+        keywords: new Set([
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double',
+            'else', 'enum', 'extern', 'float', 'for', 'goto', 'if', 'inline', 'int', 'long',
+            'register', 'restrict', 'return', 'short', 'signed', 'sizeof', 'static', 'struct',
+            'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', 'NULL'
+        ]),
+        builtins: new Set(['printf', 'scanf', 'malloc', 'free', 'calloc', 'realloc', 'memcpy', 'memmove', 'memset', 'strlen', 'strcmp', 'strcpy', 'strncpy', 'fopen', 'fclose', 'fprintf', 'fscanf', 'fread', 'fwrite', 'exit', 'main']),
+        types: new Set(['size_t', 'ptrdiff_t', 'int8_t', 'int16_t', 'int32_t', 'int64_t', 'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t', 'FILE', 'bool']),
+        ...C_FAMILY_COMMENTS
+    },
+    cpp: {
+        keywords: new Set([
+            'alignas', 'alignof', 'auto', 'break', 'case', 'catch', 'class', 'const', 'constexpr',
+            'const_cast', 'continue', 'decltype', 'default', 'delete', 'do', 'dynamic_cast', 'else',
+            'enum', 'explicit', 'export', 'extern', 'final', 'for', 'friend', 'goto', 'if',
+            'inline', 'mutable', 'namespace', 'new', 'noexcept', 'nullptr', 'operator', 'override',
+            'private', 'protected', 'public', 'register', 'reinterpret_cast', 'return', 'sizeof',
+            'static', 'static_assert', 'static_cast', 'struct', 'switch', 'template', 'this',
+            'throw', 'try', 'typedef', 'typeid', 'typename', 'union', 'using', 'virtual', 'void',
+            'volatile', 'while', 'true', 'false', 'concept', 'requires', 'co_await', 'co_return', 'co_yield'
+        ]),
+        builtins: new Set(['std', 'cout', 'cin', 'endl', 'cerr', 'move', 'forward', 'swap', 'begin', 'end', 'emplace_back', 'push_back', 'size', 'printf', 'malloc', 'free', 'main']),
+        types: new Set(['string', 'vector', 'map', 'set', 'unordered_map', 'unordered_set', 'array', 'pair', 'tuple', 'unique_ptr', 'shared_ptr', 'weak_ptr', 'optional', 'variant', 'span', 'size_t', 'int64_t', 'uint32_t', 'string_view']),
+        ...C_FAMILY_COMMENTS
+    },
+    csharp: {
+        keywords: new Set([
+            'abstract', 'as', 'base', 'bool', 'break', 'byte', 'case', 'catch', 'char', 'checked',
+            'class', 'const', 'continue', 'decimal', 'default', 'delegate', 'do', 'double', 'else',
+            'enum', 'event', 'explicit', 'extern', 'false', 'finally', 'fixed', 'float', 'for',
+            'foreach', 'goto', 'if', 'implicit', 'in', 'int', 'interface', 'internal', 'is', 'lock',
+            'long', 'namespace', 'new', 'null', 'object', 'operator', 'out', 'override', 'params',
+            'private', 'protected', 'public', 'readonly', 'record', 'ref', 'return', 'sbyte', 'sealed',
+            'short', 'sizeof', 'stackalloc', 'static', 'string', 'struct', 'switch', 'this', 'throw',
+            'true', 'try', 'typeof', 'uint', 'ulong', 'unchecked', 'unsafe', 'ushort', 'using', 'var',
+            'virtual', 'void', 'volatile', 'while', 'async', 'await', 'yield', 'partial', 'value', 'when'
+        ]),
+        builtins: new Set(['Console', 'Math', 'Task', 'Enumerable', 'BitConverter', 'Convert', 'Environment', 'GC', 'Activator', 'WriteLine', 'ReadLine']),
+        types: new Set(['String', 'Int32', 'Int64', 'Double', 'Boolean', 'Char', 'Object', 'List', 'Dictionary', 'HashSet', 'Queue', 'Stack', 'IEnumerable', 'ICollection', 'IDisposable', 'Task', 'CancellationToken', 'Span', 'Memory']),
+        ...C_FAMILY_COMMENTS
+    },
+    kotlin: {
+        keywords: new Set([
+            'package', 'import', 'class', 'interface', 'object', 'fun', 'val', 'var', 'vararg',
+            'when', 'while', 'for', 'if', 'else', 'return', 'break', 'continue', 'throw', 'try',
+            'catch', 'finally', 'in', 'is', 'as', 'typealias', 'constructor', 'init', 'companion',
+            'data', 'sealed', 'enum', 'annotation', 'override', 'private', 'protected', 'public',
+            'internal', 'abstract', 'final', 'open', 'suspend', 'lateinit', 'by', 'lazy', 'inline',
+            'reified', 'out', 'operator', 'infix', 'tailrec', 'true', 'false', 'null', 'it'
+        ]),
+        builtins: new Set(['println', 'print', 'listOf', 'mapOf', 'setOf', 'mutableListOf', 'mutableMapOf', 'arrayOf', 'require', 'check', 'error', 'run', 'let', 'apply', 'also', 'with']),
+        types: new Set(['String', 'Int', 'Long', 'Double', 'Float', 'Boolean', 'Char', 'Unit', 'Any', 'Nothing', 'List', 'Map', 'Set', 'Array', 'Pair', 'Result']),
+        ...C_FAMILY_COMMENTS
+    },
+    go: {
+        keywords: new Set([
+            'break', 'case', 'chan', 'const', 'continue', 'default', 'defer', 'else',
+            'fallthrough', 'for', 'func', 'go', 'goto', 'if', 'import', 'interface',
+            'map', 'package', 'range', 'return', 'select', 'struct', 'switch', 'type', 'var',
+            'true', 'false', 'nil', 'iota'
+        ]),
+        builtins: new Set(['make', 'new', 'len', 'cap', 'append', 'copy', 'delete', 'close', 'panic', 'recover', 'print', 'println', 'fmt', 'errorf', 'printf']),
+        types: new Set(['string', 'int', 'int64', 'uint8', 'byte', 'rune', 'float64', 'float32', 'bool', 'error', 'any', 'context', 'WaitGroup', 'Mutex']),
+        ...C_FAMILY_COMMENTS
+    },
+    rust: {
+        keywords: new Set([
+            'as', 'async', 'await', 'break', 'const', 'continue', 'crate', 'dyn', 'else',
+            'enum', 'extern', 'false', 'fn', 'for', 'if', 'impl', 'in', 'let', 'loop',
+            'match', 'mod', 'move', 'mut', 'pub', 'ref', 'return', 'self', 'Self', 'static',
+            'struct', 'super', 'trait', 'true', 'type', 'unsafe', 'use', 'where', 'while',
+            'box', 'macro_rules', 'lifetime'
+        ]),
+        builtins: new Set(['println', 'print', 'format', 'panic', 'vec', 'todo', 'unimplemented', 'assert', 'assert_eq', 'dbg', 'write', 'writeln']),
+        types: new Set(['Option', 'Some', 'None', 'Result', 'Ok', 'Err', 'Vec', 'String', 'str', 'Box', 'Rc', 'Arc', 'HashMap', 'BTreeMap', 'HashSet', 'i32', 'i64', 'u8', 'u32', 'u64', 'usize', 'isize', 'f32', 'f64', 'bool', 'char']),
+        ...C_FAMILY_COMMENTS
+    },
+    ruby: {
+        keywords: new Set([
+            'alias', 'and', 'begin', 'break', 'case', 'class', 'def', 'defined?', 'do', 'else',
+            'elsif', 'end', 'ensure', 'for', 'if', 'in', 'module', 'next', 'not', 'or', 'redo',
+            'rescue', 'retry', 'return', 'self', 'super', 'then', 'undef', 'unless', 'until',
+            'when', 'while', 'yield', 'require', 'require_relative', 'include', 'extend', 'attr_accessor',
+            'attr_reader', 'attr_writer', 'lambda', 'proc', 'true', 'false', 'nil', 'puts', 'raise'
+        ]),
+        builtins: new Set(['puts', 'print', 'p', 'pp', 'raise', 'format', 'loop', 'raise', 'gets', 'chomp', 'to_s', 'to_i', 'to_a', 'each', 'map', 'select', 'reject', 'reduce']),
+        types: new Set(['Array', 'Hash', 'String', 'Symbol', 'Integer', 'Float', 'Boolean', 'NilClass', 'Object', 'Class', 'Module', 'Struct', 'Enumerable']),
+        commentSingle: '#'
+    },
+    php: {
+        keywords: new Set([
+            'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class',
+            'clone', 'const', 'continue', 'declare', 'default', 'do', 'echo', 'else', 'elseif',
+            'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile',
+            'extends', 'final', 'finally', 'fn', 'for', 'foreach', 'function', 'global', 'goto',
+            'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface',
+            'isset', 'list', 'match', 'namespace', 'new', 'or', 'print', 'private', 'protected',
+            'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw',
+            'trait', 'try', 'unset', 'use', 'var', 'while', 'xor', 'yield', 'true', 'false', 'null'
+        ]),
+        builtins: new Set(['echo', 'print', 'isset', 'unset', 'empty', 'count', 'array_push', 'array_map', 'array_filter', 'implode', 'explode', 'sprintf', 'strlen', 'strpos', 'json_encode', 'json_decode', 'var_dump']),
+        types: new Set(['int', 'float', 'string', 'bool', 'array', 'object', 'callable', 'iterable', 'mixed', 'void', 'never', 'self', 'parent', 'Exception', 'Throwable', 'PDO', 'DateTime']),
+        commentSingle: '//',
+        commentMultiStart: '/*',
+        commentMultiEnd: '*/'
     },
     elisp: {
         keywords: new Set([
@@ -255,63 +377,123 @@ const LANGUAGES = {
         keywords: new Set([
             'if', 'then', 'else', 'elif', 'fi', 'case', 'esac', 'for', 'while', 'until',
             'do', 'done', 'in', 'function', 'select', 'time', 'return', 'exit', 'echo',
-            'export', 'local', 'source', 'set', 'unset'
+            'export', 'local', 'source', 'set', 'unset', 'readonly', 'declare', 'shift', 'trap'
         ]),
-        builtins: new Set(['cd', 'ls', 'mkdir', 'rm', 'cp', 'mv', 'grep', 'sed', 'awk', 'cat', 'curl', 'git']),
-        commentSingle: '#'
-    },
-    json: {
-        keywords: new Set(['true', 'false', 'null'])
-    },
-    rust: {
-        keywords: new Set([
-            'as', 'async', 'await', 'break', 'const', 'continue', 'crate', 'dyn', 'else',
-            'enum', 'extern', 'false', 'fn', 'for', 'if', 'impl', 'in', 'let', 'loop',
-            'match', 'mod', 'move', 'mut', 'pub', 'ref', 'return', 'self', 'Self', 'static',
-            'struct', 'super', 'trait', 'true', 'type', 'unsafe', 'use', 'where', 'while'
-        ]),
-        builtins: new Set(['Option', 'Some', 'None', 'Result', 'Ok', 'Err', 'Vec', 'String', 'println', 'format', 'panic']),
-        commentSingle: '//',
-        commentMultiStart: '/*',
-        commentMultiEnd: '*/'
-    },
-    go: {
-        keywords: new Set([
-            'break', 'case', 'chan', 'const', 'continue', 'default', 'defer', 'else',
-            'fallthrough', 'for', 'func', 'go', 'goto', 'if', 'import', 'interface',
-            'map', 'package', 'range', 'return', 'select', 'struct', 'switch', 'type', 'var',
-            'true', 'false', 'nil'
-        ]),
-        builtins: new Set(['make', 'new', 'len', 'cap', 'append', 'copy', 'delete', 'close', 'panic', 'recover', 'fmt']),
-        commentSingle: '//',
-        commentMultiStart: '/*',
-        commentMultiEnd: '*/'
+        builtins: new Set(['cd', 'ls', 'mkdir', 'rm', 'cp', 'mv', 'grep', 'sed', 'awk', 'cat', 'curl', 'git', 'chmod', 'chown', 'find', 'xargs', 'tar', 'ssh', 'scp', 'sudo', 'printf', 'read', 'test']),
+        commentSingle: '#',
     },
     sql: {
         keywords: new Set([
             'SELECT', 'FROM', 'WHERE', 'INSERT', 'INTO', 'UPDATE', 'DELETE', 'JOIN',
-            'LEFT', 'RIGHT', 'INNER', 'OUTER', 'ON', 'GROUP', 'BY', 'ORDER', 'HAVING',
-            'LIMIT', 'OFFSET', 'UNION', 'ALL', 'AS', 'AND', 'OR', 'NOT', 'NULL', 'IS',
-            'CREATE', 'TABLE', 'DROP', 'ALTER', 'INDEX', 'PRIMARY', 'KEY', 'VALUES'
+            'LEFT', 'RIGHT', 'INNER', 'OUTER', 'FULL', 'CROSS', 'ON', 'GROUP', 'BY', 'ORDER',
+            'HAVING', 'LIMIT', 'OFFSET', 'UNION', 'ALL', 'AS', 'AND', 'OR', 'NOT', 'NULL', 'IS',
+            'CREATE', 'TABLE', 'DROP', 'ALTER', 'INDEX', 'PRIMARY', 'KEY', 'VALUES', 'SET',
+            'DISTINCT', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END', 'EXISTS', 'BETWEEN', 'LIKE', 'IN',
+            'WITH', 'RECURSIVE', 'RETURNING', 'CONSTRAINT', 'FOREIGN', 'REFERENCES', 'DEFAULT', 'UNIQUE'
         ]),
+        builtins: new Set(['COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'NOW', 'CURRENT_TIMESTAMP', 'CAST', 'CONVERT', 'SUBSTRING', 'TRIM', 'UPPER', 'LOWER', 'ROUND', 'ABS']),
+        types: new Set(['INT', 'INTEGER', 'BIGINT', 'SMALLINT', 'TEXT', 'VARCHAR', 'CHAR', 'BOOLEAN', 'BOOL', 'DATE', 'TIMESTAMP', 'NUMERIC', 'DECIMAL', 'FLOAT', 'DOUBLE', 'JSON', 'JSONB', 'UUID', 'SERIAL']),
         commentSingle: '--',
         commentMultiStart: '/*',
         commentMultiEnd: '*/'
-    }
+    },
+    json: {
+        keywords: new Set(['true', 'false', 'null']),
+        attrBeforeColon: true
+    },
+    html: {
+        keywords: new Set([]),
+        commentMultiStart: '<!--',
+        commentMultiEnd: '-->',
+        tagMarkup: true
+    },
+    css: {
+        keywords: new Set(['important', 'inherit', 'initial', 'unset', 'none', 'auto', 'flex', 'grid', 'block', 'inline', 'absolute', 'relative', 'fixed', 'sticky', 'solid', 'dashed', 'dotted', 'transparent', 'currentColor']),
+        builtins: new Set(['rgb', 'rgba', 'hsl', 'hsla', 'calc', 'var', 'url', 'linear-gradient', 'radial-gradient', 'translate', 'scale', 'rotate', 'min', 'max', 'clamp']),
+        attrBeforeColon: true,
+        commentMultiStart: '/*',
+        commentMultiEnd: '*/'
+    },
+    yaml: {
+        keywords: new Set(['true', 'false', 'null', 'yes', 'no', 'on', 'off']),
+        attrBeforeColon: true,
+        commentSingle: '#'
+    },
 };
 // Aliases
 const ALIASES = {
     js: 'javascript',
+    jsx: 'javascript',
+    mjs: 'javascript',
+    cjs: 'javascript',
     ts: 'typescript',
+    tsx: 'typescript',
     py: 'python',
+    python3: 'python',
     'emacs-lisp': 'elisp',
     lisp: 'elisp',
     sh: 'bash',
     shell: 'bash',
     zsh: 'bash',
+    console: 'bash',
     rs: 'rust',
-    golang: 'go'
+    golang: 'go',
+    h: 'c',
+    hpp: 'cpp',
+    cc: 'cpp',
+    cxx: 'cpp',
+    'c++': 'cpp',
+    cs: 'csharp',
+    'c#': 'csharp',
+    kt: 'kotlin',
+    rb: 'ruby',
+    yml: 'yaml',
+    xml: 'html',
+    svg: 'html',
+    vue: 'html',
+    htm: 'html',
+    scss: 'css',
+    less: 'css',
+    md: 'markdown'
 };
+const STRING_QUOTES = (normalized) => {
+    const quotes = new Set(['"', "'"]);
+    if (normalized === 'javascript' || normalized === 'typescript' || normalized === 'bash') {
+        quotes.add('`');
+    }
+    return quotes;
+};
+function highlightTag(segment) {
+    let out = '';
+    // First word after '<' or '</' is the tag name; other words are attributes.
+    const re = /(<\/?|\/?>|=)|([a-zA-Z_!][\w:.-]*)|("[^"]*"|'[^']*')|([\s\S])/g;
+    let match;
+    let seenTagName = false;
+    while ((match = re.exec(segment)) !== null) {
+        if (match[1] !== undefined) {
+            out += `<span class="hljs-punctuation">${escapeHtml(match[1])}</span>`;
+            if (match[1] === '<' || match[1] === '</')
+                seenTagName = false;
+            continue;
+        }
+        if (match[2] !== undefined) {
+            if (!seenTagName) {
+                out += `<span class="hljs-keyword">${escapeHtml(match[2])}</span>`;
+                seenTagName = true;
+            }
+            else {
+                out += `<span class="hljs-attr">${escapeHtml(match[2])}</span>`;
+            }
+            continue;
+        }
+        if (match[3] !== undefined) {
+            out += `<span class="hljs-string">${escapeHtml(match[3])}</span>`;
+            continue;
+        }
+        out += escapeHtml(match[4]);
+    }
+    return out;
+}
 function highlightCode(code, langName) {
     if (!langName) {
         return escapeHtml(code);
@@ -321,6 +503,7 @@ function highlightCode(code, langName) {
     if (!lang) {
         return escapeHtml(code);
     }
+    const quotes = STRING_QUOTES(normalized);
     // Tokenize line by line
     const lines = code.split('\n');
     const resultLines = [];
@@ -329,6 +512,9 @@ function highlightCode(code, langName) {
         let out = '';
         let i = 0;
         const len = line.length;
+        if (inMultiComment) {
+            out += '<span class="hljs-comment">';
+        }
         while (i < len) {
             // Check multi-line comment end
             if (inMultiComment) {
@@ -356,9 +542,51 @@ function highlightCode(code, langName) {
                 i = len;
                 break;
             }
-            // String literals: "...", '...', `...`
             const char = line[i];
-            if (char === '"' || char === "'" || (char === '`' && (normalized === 'javascript' || normalized === 'typescript'))) {
+            // Markup tags: <div class="x">, </div>, <!DOCTYPE ...>
+            if (lang.tagMarkup && char === '<' && /[a-zA-Z\/!]/.test(line[i + 1] || '')) {
+                let end = i + 1;
+                while (end < len) {
+                    const c = line[end];
+                    if (c === '"' || c === "'") {
+                        const q = c;
+                        end++;
+                        while (end < len && line[end] !== q)
+                            end++;
+                    }
+                    else if (c === '>') {
+                        break;
+                    }
+                    end++;
+                }
+                const segment = line.slice(i, Math.min(end + 1, len));
+                if (segment.startsWith('<!--')) {
+                    const close = segment.indexOf('-->');
+                    if (close === -1) {
+                        out += '<span class="hljs-comment">' + escapeHtml(segment) + '</span>';
+                        inMultiComment = true;
+                    }
+                    else {
+                        out += '<span class="hljs-comment">' + escapeHtml(segment) + '</span>';
+                    }
+                }
+                else {
+                    out += highlightTag(segment);
+                }
+                i += segment.length;
+                continue;
+            }
+            // Decorators / annotations / css at-rules: @word
+            if (char === '@' && /[a-zA-Z_]/.test(line[i + 1] || '')) {
+                let wordEnd = i + 1;
+                while (wordEnd < len && /[\w-]/.test(line[wordEnd]))
+                    wordEnd++;
+                out += '<span class="hljs-meta">@' + escapeHtml(line.slice(i + 1, wordEnd)) + '</span>';
+                i = wordEnd;
+                continue;
+            }
+            // String literals
+            if (quotes.has(char)) {
                 const quote = char;
                 let strEnd = i + 1;
                 while (strEnd < len) {
@@ -378,31 +606,53 @@ function highlightCode(code, langName) {
                 continue;
             }
             // Numbers
-            if (/\d/.test(char) && (i === 0 || /[\s,([+\-*/=><]/.test(line[i - 1]))) {
+            if (/\d/.test(char) && (i === 0 || /[\s,([+\-*/=><:]/.test(line[i - 1]))) {
                 let numEnd = i;
                 while (numEnd < len && /[\d.xXa-fA-F_]/.test(line[numEnd])) {
                     numEnd++;
                 }
+                // css units
+                while (numEnd < len && /[a-zA-Z%]/.test(line[numEnd]))
+                    numEnd++;
                 out += '<span class="hljs-number">' + escapeHtml(line.slice(i, numEnd)) + '</span>';
                 i = numEnd;
                 continue;
             }
             // Identifiers / Words
-            if (/[a-zA-Z_$]/.test(char)) {
+            if (/[a-zA-Z_$#-]/.test(char) && !(char === '-' && /[\d]/.test(line[i + 1] || ''))) {
+                // Hex colors: #fff, #a1b2c3
+                if (char === '#' && /^#[0-9a-fA-F]{3,8}\b/.test(line.slice(i))) {
+                    const hex = line.slice(i).match(/^#[0-9a-fA-F]{3,8}\b/)[0];
+                    out += '<span class="hljs-number">' + escapeHtml(hex) + '</span>';
+                    i += hex.length;
+                    continue;
+                }
                 let wordEnd = i;
-                while (wordEnd < len && /[a-zA-Z0-9_$\-]/.test(line[wordEnd])) {
+                while (wordEnd < len && /[a-zA-Z0-9_$#\-]/.test(line[wordEnd])) {
                     wordEnd++;
                 }
+                if (wordEnd === i)
+                    wordEnd = i + 1;
                 const word = line.slice(i, wordEnd);
                 const upperWord = word.toUpperCase();
-                if (lang.keywords.has(word) || lang.keywords.has(upperWord)) {
+                const rest = line.slice(wordEnd);
+                if (char === '$' && (normalized === 'bash' || normalized === 'php')) {
+                    out += '<span class="hljs-variable">' + escapeHtml(word) + '</span>';
+                }
+                else if (lang.keywords.has(word) || lang.keywords.has(upperWord)) {
                     out += '<span class="hljs-keyword">' + escapeHtml(word) + '</span>';
                 }
-                else if (lang.builtins && (lang.builtins.has(word) || lang.builtins.has(upperWord))) {
+                else if (lang.types && (lang.types.has(word) || lang.types.has(upperWord))) {
                     out += '<span class="hljs-built_in">' + escapeHtml(word) + '</span>';
+                }
+                else if (lang.attrBeforeColon && /^\s*:/.test(rest)) {
+                    out += '<span class="hljs-attr">' + escapeHtml(word) + '</span>';
                 }
                 else if (wordEnd < len && line[wordEnd] === '(') {
                     out += '<span class="hljs-title function_">' + escapeHtml(word) + '</span>';
+                }
+                else if (lang.builtins && (lang.builtins.has(word) || lang.builtins.has(upperWord))) {
+                    out += '<span class="hljs-built_in">' + escapeHtml(word) + '</span>';
                 }
                 else {
                     out += escapeHtml(word);
@@ -461,8 +711,21 @@ const GREEK_AND_SYMBOLS = {
     sum: '∑', prod: '∏', coprod: '∐',
     partial: '∂', nabla: '∇', infty: '∞', prime: '′',
     // Dots & Spaces
-    ldots: '…', cdots: '⋯', ddots: '⋱', vdots: '⋮',
+    ldots: '…', cdots: '⋯', ddots: '⋱', vdots: '⋮', dots: '…',
     quad: '    ', qquad: '        '
+};
+// Accents rendered as <mover> with a Unicode accent character.
+const ACCENTS = {
+    hat: { char: 'ˆ', stretchy: false },
+    widehat: { char: 'ˆ', stretchy: true },
+    tilde: { char: '˜', stretchy: false },
+    widetilde: { char: '˜', stretchy: true },
+    bar: { char: '‾', stretchy: true },
+    overline: { char: '‾', stretchy: true },
+    vec: { char: '→', stretchy: true },
+    dot: { char: '˙', stretchy: false },
+    ddot: { char: '¨', stretchy: false },
+    check: { char: 'ˇ', stretchy: false }
 };
 const MATH_FUNCS = new Set([
     'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan',
@@ -536,6 +799,13 @@ class TeXParser {
                 const num = this.parseGroup();
                 const den = this.parseGroup();
                 return `<mfrac><mrow>${num}</mrow><mrow>${den}</mrow></mfrac>`;
+            }
+            // Accents: \hat{y}, \overline{x}, \vec{v}, ...
+            const accent = ACCENTS[cmd];
+            if (accent) {
+                const base = this.parseGroup();
+                const stretchy = accent.stretchy ? ' stretchy="true"' : '';
+                return `<mover><mrow>${base}</mrow><mo accent="true"${stretchy}>${accent.char}</mo></mover>`;
             }
             // Check square root \sqrt[n]{x} or \sqrt{x}
             if (cmd === 'sqrt') {
@@ -762,8 +1032,18 @@ function slugify(text) {
 function formatInline(text) {
     if (!text)
         return '';
+    // Math spans are stashed first so verbatim/bold/italic passes cannot chew on
+    // LaTeX (and vice versa); placeholders are restored after all other passes.
+    const mathSpans = [];
+    const stashMath = (html) => {
+        mathSpans.push(html);
+        return `\u0000${mathSpans.length - 1}\u0000`;
+    };
+    let res = text.replace(/\$\$([^$\n]+)\$\$/g, (_, math) => stashMath(latexToMathML(math, true)));
+    res = res.replace(/\$([^$\n]+)\$/g, (_, math) => stashMath(latexToMathML(math, false)));
+    res = res.replace(/\\\(([^\n]+?)\\\)/g, (_, math) => stashMath(latexToMathML(math, false)));
     // 1. Links & Images: [[target][description]] or [[target]]
-    let res = text.replace(/\[\[([^\]]+)\](?:\[([^\]]*)\])?\]/g, (_, target, desc) => {
+    res = res.replace(/\[\[([^\]]+)\](?:\[([^\]]*)\])?\]/g, (_, target, desc) => {
         let rawTarget = target.trim();
         // Normalize file: prefix (e.g. file:img.png -> img.png)
         if (rawTarget.startsWith('file:') && !rawTarget.startsWith('file:///')) {
@@ -813,20 +1093,18 @@ function formatInline(text) {
         return `<time class="org-timestamp ${isInactive ? 'org-timestamp-inactive' : 'org-timestamp-active'}">${escapeHtml(ts)}</time>`;
     });
     // 5. Code: ~code~ and =verbatim=
-    res = res.replace(/(^|[\s({\[])~([^~\n]+)~([)\]}\s.,!?:;'\-]|$)/g, '$1<code class="org-code">$2</code>$3');
-    res = res.replace(/(^|[\s({\[])=([^=\n]+)=([)\]}\s.,!?:;'\-]|$)/g, '$1<code class="org-verbatim">$2</code>$3');
+    res = res.replace(/(^|[\s({\[（《【“‘])~([^~\n]+)~([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<code class="org-code">$2</code>$3');
+    res = res.replace(/(^|[\s({\[（《【“‘])=([^=\n]+)=([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<code class="org-verbatim">$2</code>$3');
     // 6. Bold: *bold*
-    res = res.replace(/(^|[\s({\[])\*([^*\n\s](?:[^*\n]*[^*\n\s])?)\*([)\]}\s.,!?:;'\-]|$)/g, '$1<strong>$2</strong>$3');
+    res = res.replace(/(^|[\s({\[（《【“‘])\*([^*\n\s](?:[^*\n]*[^*\n\s])?)\*([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<strong>$2</strong>$3');
     // 7. Italic: /italic/
-    res = res.replace(/(^|[\s({\[])\/([^\/\n\s](?:[^\/\n]*[^\/\n\s])?)\/([)\]}\s.,!?:;'\-]|$)/g, '$1<em>$2</em>$3');
+    res = res.replace(/(^|[\s({\[（《【“‘])\/([^\/\n\s](?:[^\/\n]*[^\/\n\s])?)\/([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<em>$2</em>$3');
     // 8. Underline: _underline_
-    res = res.replace(/(^|[\s({\[])_([^_\n\s](?:[^_\n]*[^_\n\s])?)_([)\]}\s.,!?:;'\-]|$)/g, '$1<u>$2</u>$3');
+    res = res.replace(/(^|[\s({\[（《【“‘])_([^_\n\s](?:[^_\n]*[^_\n\s])?)_([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<u>$2</u>$3');
     // 9. Strikethrough: +strike+
-    res = res.replace(/(^|[\s({\[])\+([^\+\n\s](?:[^\+\n]*[^\+\n\s])?)\+([)\]}\s.,!?:;'\-]|$)/g, '$1<del>$2</del>$3');
-    // 10. Inline Math: $...$ or \(...\) -> Native MathML
-    res = res.replace(/\$([^\$\n]+)\$/g, (_, math) => latexToMathML(math, false));
-    res = res.replace(/\\\(([^\n]+?)\\\)/g, (_, math) => latexToMathML(math, false));
-    return res;
+    res = res.replace(/(^|[\s({\[（《【“‘])\+([^\+\n\s](?:[^\+\n]*[^\+\n\s])?)\+([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<del>$2</del>$3');
+    // 10. Restore stashed MathML
+    return res.replace(/\u0000(\d+)\u0000/g, (_, index) => mathSpans[Number(index)]);
 }
 function compileOrg(orgText) {
     const todoConfig = parseTodoKeywords(orgText);
@@ -844,6 +1122,8 @@ function compileOrg(orgText) {
     let exampleLines = [];
     let inExportBlock = false;
     let exportLines = [];
+    let inCenterBlock = false;
+    let centerLines = [];
     let inCommentBlock = false;
     let inDrawer = false;
     let drawerName = '';
@@ -928,9 +1208,18 @@ function compileOrg(orgText) {
         if (/^#\+END_SRC/i.test(trimmed)) {
             inSrcBlock = false;
             const highlighted = highlightCode(srcLines.join('\n'), srcLang);
-            out.push(`<div class="org-src-block">` +
+            const linesHtml = highlighted
+                .split('\n')
+                .map((lineHtml) => `<span class="org-code-line">${lineHtml}</span>`)
+                .join('');
+            const captionHtml = pendingCaption
+                ? `<div class="org-block-caption">${formatInline(pendingCaption)}</div>`
+                : '';
+            pendingCaption = '';
+            out.push(captionHtml +
+                `<div class="org-src-block">` +
                 `<div class="org-src-header"><span class="org-src-lang">${escapeHtml(srcLang || 'text')}</span></div>` +
-                `<pre><code class="language-${escapeHtml(srcLang || 'text')}">${highlighted}</code></pre>` +
+                `<pre><code class="language-${escapeHtml(srcLang || 'text')}">${linesHtml}</code></pre>` +
                 `</div>`);
             continue;
         }
@@ -994,6 +1283,33 @@ function compileOrg(orgText) {
             continue;
         }
         if (inCommentBlock) {
+            continue;
+        }
+        if (/^#\+BEGIN_CENTER/i.test(trimmed)) {
+            closeBlocks();
+            inCenterBlock = true;
+            centerLines = [];
+            continue;
+        }
+        if (/^#\+END_CENTER/i.test(trimmed)) {
+            inCenterBlock = false;
+            out.push(`<div class="org-center" style="text-align: center;"><p>${formatInline(centerLines.join(' '))}</p></div>`);
+            continue;
+        }
+        if (inCenterBlock) {
+            centerLines.push(rawLine);
+            continue;
+        }
+        // Comments: line starting with # followed by whitespace, or solitary #
+        if (/^#[ \t]+/.test(rawLine) || rawLine.trim() === '#') {
+            continue;
+        }
+        // Include directives: #+INCLUDE: "..."
+        const incMatch = trimmed.match(/^#\+INCLUDE:[ \t]*"?([^"\n]+)"?/i);
+        if (incMatch) {
+            closeBlocks();
+            const incPath = incMatch[1].trim();
+            out.push(`<div class="org-include-card"><span class="org-include-badge">&#128196; INCLUDE</span> <code class="org-include-path">${escapeHtml(incPath)}</code></div>`);
             continue;
         }
         // 2. Drawers: :PROPERTIES: ... :END:
@@ -1209,6 +1525,15 @@ function compileOrg(orgText) {
             continue;
         }
         // 12. Normal paragraph
+        // A lone image link preceded by #+CAPTION becomes a captioned figure.
+        const soloImage = trimmed.match(/^\[\[([^\]]+)\](?:\[([^\]]*)\])?\]$/);
+        if (soloImage && pendingCaption && !soloImage[2] &&
+            /\.(png|jpe?g|gif|svg|webp|bmp)(?:\?[^\]]*)?$/i.test(soloImage[1].trim())) {
+            const figure = formatInline(trimmed).replace('</figure>', `<figcaption>${formatInline(pendingCaption)}</figcaption></figure>`);
+            pendingCaption = '';
+            out.push(figure);
+            continue;
+        }
         out.push(`<p>${formatInline(rawLine)}</p>`);
     }
     // Close remaining open structures
@@ -1265,25 +1590,27 @@ function compileOrg(orgText) {
  * Uses chrome.storage.sync for user preferences.
  * Uses sessionStorage for session scroll and heading fold states per URL.
  */
-import { detectDefaultLanguage, setActiveLanguage } from './i18n.js';
+
 function getDefaultSettings() {
     return {
         theme: 'system',
         defaultTocExpanded: true,
         webRenderingEnabled: false,
-        language: detectDefaultLanguage()
+        language: detectDefaultLanguage(),
+        sidebarWidth: 0
     };
 }
 async function getSettings() {
     const defaults = getDefaultSettings();
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         try {
-            const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language']);
+            const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language', 'sidebarWidth']);
             const settings = {
                 theme: res.theme ?? defaults.theme,
                 defaultTocExpanded: res.defaultTocExpanded ?? defaults.defaultTocExpanded,
                 webRenderingEnabled: res.webRenderingEnabled ?? defaults.webRenderingEnabled,
-                language: res.language ?? defaults.language
+                language: res.language ?? defaults.language,
+                sidebarWidth: typeof res.sidebarWidth === 'number' ? res.sidebarWidth : defaults.sidebarWidth
             };
             setActiveLanguage(settings.language);
             return settings;
@@ -1333,7 +1660,7 @@ function getSessionDocState(url) {
   // --- i18n.js ---
   /**
  * Internationalization helper for Org Viewer.
- * Supports manual language switching (zh_CN and en) and automatic IP / location detection.
+ * Supports manual language switching (zh_CN and en) and locale detection.
  */
 const MESSAGES = {
     en: {
@@ -1344,9 +1671,11 @@ const MESSAGES = {
         expandAll: "Expand All",
         collapseAll: "Collapse All",
         outline: "Outline",
+        resizeOutline: "Drag to resize outline, double-click to reset",
         themeSystem: "System Theme",
         themeLight: "Light Theme",
         themeDark: "Dark Theme",
+        themePhycat: "Phycat Theme",
         print: "Print Document",
         largeFileWarning: "This file is larger than 5MB. Automatic rendering was paused to preserve performance.",
         renderAnyway: "Render Anyway",
@@ -1375,6 +1704,19 @@ const MESSAGES = {
         statusEnabled: "Status: Enabled. Local file:///*.org files will be rendered.",
         statusDisabled: "Status: Disabled. Click Manage Permission to enable 'Allow access to file URLs'.",
         optionsSave: "Settings saved",
+        popupReady: "Ready to preview .org files",
+        popupRenderCurrent: "Render this .org file",
+        popupOpenViewer: "Open viewer",
+        popupChooseOrg: "Choose .org file",
+        popupLocalAccess: "Local file access",
+        popupAccessEnabled: "Enabled",
+        popupAccessDisabled: "Not enabled",
+        popupEnableAccess: "Enable local file access",
+        popupManageAccess: "Manage",
+        popupSettings: "Settings",
+        popupOnlyOrg: "Only .org files are supported.",
+        popupRendering: "Rendering...",
+        popupRenderComplete: "The current page has been rendered.",
         welcomeTitle: "Welcome to Org Viewer",
         welcomeStep1: "Enable Local File Access",
         welcomeStep1Desc: "Chrome requires manual permission for extensions to read local file:/// URLs. To view your local .org notes:",
@@ -1392,9 +1734,11 @@ const MESSAGES = {
         expandAll: "全部展开",
         collapseAll: "全部折叠",
         outline: "大纲目录",
+        resizeOutline: "拖拽调整大纲宽度，双击恢复默认",
         themeSystem: "跟随系统",
         themeLight: "浅色模式",
         themeDark: "深色模式",
+        themePhycat: "Phycat 主题",
         print: "打印文档",
         largeFileWarning: "此文件大于 5MB，已暂停自动渲染以保护浏览器性能。",
         renderAnyway: "仍然渲染",
@@ -1423,6 +1767,19 @@ const MESSAGES = {
         statusEnabled: "状态：已开启。本地 file:///*.org 文件将自动接管渲染。",
         statusDisabled: "状态：未开启。请点击“前往设置”开启“允许访问文件网址”。",
         optionsSave: "设置已保存",
+        popupReady: "可预览 .org 文件",
+        popupRenderCurrent: "渲染当前 .org 文件",
+        popupOpenViewer: "打开预览器",
+        popupChooseOrg: "选择 .org 文件",
+        popupLocalAccess: "本地文件权限",
+        popupAccessEnabled: "已开启",
+        popupAccessDisabled: "未开启",
+        popupEnableAccess: "开启本地文件权限",
+        popupManageAccess: "管理",
+        popupSettings: "设置",
+        popupOnlyOrg: "仅支持 .org 文件。",
+        popupRendering: "正在渲染...",
+        popupRenderComplete: "当前页面已渲染完成。",
         welcomeTitle: "欢迎使用 Org Viewer",
         welcomeStep1: "第一步：开启本地文件访问权限",
         welcomeStep1Desc: "出于安全考虑，Chrome 默认禁止扩展直接读取 file:/// 网址。如需预览本地 .org 文件：",
@@ -1468,35 +1825,6 @@ function detectDefaultLanguage() {
     }
     return 'en';
 }
-/**
- * Asynchronously detects user country via public lightweight GeoIP service.
- * If country is China (CN), returns zh_CN; otherwise returns en.
- * Times out gracefully after 1.5s to fall back to timezone / locale detection.
- */
-async function detectLanguageByIp() {
-    const fallback = detectDefaultLanguage();
-    if (typeof fetch === 'undefined')
-        return fallback;
-    try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 1500);
-        // Free, lightweight public GeoIP lookup (country code only, zero data sent)
-        const res = await fetch('https://api.country.is/', {
-            signal: controller.signal
-        }).catch(() => null);
-        clearTimeout(timer);
-        if (res && res.ok) {
-            const data = await res.json().catch(() => null);
-            if (data && data.country) {
-                return data.country.toUpperCase() === 'CN' ? 'zh_CN' : 'en';
-            }
-        }
-    }
-    catch {
-        // Network unavailable or blocked, safely fallback
-    }
-    return fallback;
-}
 function t(key, lang) {
     const targetLang = lang || currentLanguage;
     const dict = MESSAGES[targetLang] || MESSAGES.en;
@@ -1517,46 +1845,188 @@ function t(key, lang) {
 }
 
 
-  // --- renderer.js ---
+  // --- shell.js ---
   /**
- * Org Viewer In-Place Renderer Bundle.
- * Injected dynamically by the background service worker when an Org file is detected.
+ * Shared viewer shell used by every rendering entry point:
+ * in-place file:// takeover and the standalone drag/paste viewer page.
+ * Builds the toolbar, outline sidebar (with drag-to-resize), and content panes
+ * so all paths render the exact same document.
  */
 
 
 
-(async function initRenderer() {
-    // Prevent duplicate mount
-    if (window.__ORG_VIEWER_MOUNTED__)
+const SIDEBAR_MIN_PX = 160;
+const SIDEBAR_MAX_RATIO = 0.6;
+const ICONS = {
+    open: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line>',
+    raw: '<polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>',
+    outline: '<line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>',
+    fold: '<polyline points="7 11 12 6 17 11"></polyline><polyline points="7 17 12 12 17 17"></polyline>',
+    theme: '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="19.78" x2="19.78" y2="20.78"></line>',
+    print: '<polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect>'
+};
+function icon(name) {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
+}
+function escapeHtml(text) {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function formatThemeLabel(theme) {
+    if (theme === 'light')
+        return t('themeLight');
+    if (theme === 'dark')
+        return t('themeDark');
+    if (theme === 'phycat')
+        return t('themePhycat');
+    return t('themeSystem');
+}
+function applyTheme(theme) {
+    document.body.classList.remove('org-theme-dark', 'org-theme-light', 'org-theme-phycat');
+    if (theme === 'phycat') {
+        // The phycat stylesheet picks its light/dark variant from the system scheme.
+        document.body.classList.add('org-theme-phycat');
         return;
-    window.__ORG_VIEWER_MOUNTED__ = true;
-    const pre = document.querySelector('body > pre');
-    const rawText = pre ? pre.textContent || '' : document.body.textContent || '';
-    if (!rawText.trim())
-        return;
-    const currentUrl = window.location.href;
-    const settings = await getSettings();
-    const sessionState = getSessionDocState(currentUrl);
-    // Compile Org to HTML and TOC
-    const result = compileOrg(rawText);
-    // Document Title
-    if (result.title) {
-        document.title = `${result.title} - Org Viewer`;
     }
-    // Create UI Root
+    if (theme === 'dark') {
+        document.body.classList.add('org-theme-dark');
+    }
+    else if (theme === 'light') {
+        document.body.classList.add('org-theme-light');
+    }
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('org-theme-dark');
+    }
+}
+function sidebarMaxPx() {
+    return Math.max(SIDEBAR_MIN_PX, Math.floor(window.innerWidth * SIDEBAR_MAX_RATIO));
+}
+// Relative or missing image sources (common in the standalone viewer) become a
+// labelled placeholder instead of a broken image glyph.
+function markBrokenImages(scope) {
+    scope.querySelectorAll('img').forEach((img) => {
+        img.addEventListener('error', () => {
+            const src = img.getAttribute('src') || '';
+            let name = src;
+            try {
+                name = decodeURIComponent(src.split('/').pop() || src);
+            }
+            catch {
+                name = src;
+            }
+            const placeholder = document.createElement('span');
+            placeholder.className = 'org-image-missing';
+            placeholder.title = src;
+            placeholder.innerHTML =
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                    '<line x1="2" y1="2" x2="22" y2="22"></line>' +
+                    '<path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"></path>' +
+                    '<line x1="13.5" y1="13.5" x2="6" y2="21"></line>' +
+                    '<line x1="18" y1="12" x2="21" y2="15"></line>' +
+                    '<path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.05-.22 1.41-.59"></path>' +
+                    '</svg>';
+            const label = document.createElement('span');
+            label.textContent = name;
+            placeholder.appendChild(label);
+            img.replaceWith(placeholder);
+        }, { once: true });
+    });
+}
+function clampSidebarWidth(px) {
+    return Math.min(sidebarMaxPx(), Math.max(SIDEBAR_MIN_PX, Math.round(px)));
+}
+function setSidebarWidth(px) {
+    document.documentElement.style.setProperty('--org-sidebar-width', `${px}px`);
+}
+function resetSidebarWidth() {
+    document.documentElement.style.removeProperty('--org-sidebar-width');
+}
+function initSidebarResizer(resizer, tocSidebar, savedWidth) {
+    if (savedWidth > 0) {
+        setSidebarWidth(clampSidebarWidth(savedWidth));
+    }
+    let dragging = false;
+    let startX = 0;
+    let startWidth = 0;
+    const currentWidth = () => tocSidebar.getBoundingClientRect().width;
+    resizer.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0)
+            return;
+        dragging = true;
+        startX = event.clientX;
+        startWidth = currentWidth();
+        resizer.setPointerCapture(event.pointerId);
+        resizer.classList.add('org-resizer-active');
+        document.body.classList.add('org-resizing');
+        event.preventDefault();
+    });
+    resizer.addEventListener('pointermove', (event) => {
+        if (!dragging)
+            return;
+        setSidebarWidth(clampSidebarWidth(startWidth + (event.clientX - startX)));
+    });
+    const endDrag = () => {
+        if (!dragging)
+            return;
+        dragging = false;
+        resizer.classList.remove('org-resizer-active');
+        document.body.classList.remove('org-resizing');
+        void saveSettings({ sidebarWidth: Math.round(currentWidth()) });
+    };
+    resizer.addEventListener('pointerup', endDrag);
+    resizer.addEventListener('pointercancel', endDrag);
+    resizer.addEventListener('dblclick', () => {
+        resetSidebarWidth();
+        void saveSettings({ sidebarWidth: 0 });
+    });
+    resizer.addEventListener('keydown', (event) => {
+        if (event.key === 'Home') {
+            event.preventDefault();
+            resetSidebarWidth();
+            void saveSettings({ sidebarWidth: 0 });
+            return;
+        }
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')
+            return;
+        event.preventDefault();
+        const delta = event.key === 'ArrowRight' ? 16 : -16;
+        const next = clampSidebarWidth(currentWidth() + delta);
+        setSidebarWidth(next);
+        void saveSettings({ sidebarWidth: next });
+    });
+    // Keep a saved pixel width usable when the window shrinks.
+    window.addEventListener('resize', () => {
+        const inline = document.documentElement.style.getPropertyValue('--org-sidebar-width');
+        if (!inline)
+            return;
+        const px = parseFloat(inline);
+        if (!Number.isFinite(px))
+            return;
+        const clamped = clampSidebarWidth(px);
+        if (clamped !== Math.round(px))
+            setSidebarWidth(clamped);
+    });
+}
+async function mountOrgShell(options) {
+    const settings = await getSettings();
+    const sessionState = options.persistKey ? getSessionDocState(options.persistKey) : null;
+    const result = compileOrg(options.rawText);
+    const docTitle = result.title || options.docName;
+    document.title = `${docTitle} - Org Viewer`;
+    document.body.classList.add('org-viewer-mounted');
     const root = document.createElement('div');
     root.className = 'org-viewer-root';
     root.id = 'org-viewer-app';
-    // Apply Theme
     let currentTheme = settings.theme;
     applyTheme(currentTheme);
-    // Build Topbar
+    const openAnotherButton = options.mode === 'standalone'
+        ? `<button class="org-btn" id="btn-open-another" title="${escapeHtml(t('openFile'))}">${icon('open')}<span>${escapeHtml(t('openFile'))}</span></button>`
+        : '';
     const topbar = document.createElement('header');
     topbar.className = 'org-topbar';
     topbar.innerHTML = `
     <div class="org-topbar-left">
       <div class="org-brand">
-        <svg class="org-brand-icon" viewBox="0 0 24 24" fill="none" stroke="#6E41A4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="org-brand-icon" viewBox="0 0 24 24" fill="none" stroke="#6E41A4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -1565,44 +2035,42 @@ function t(key, lang) {
         </svg>
         <span>Org Viewer</span>
       </div>
-      <span class="org-doc-badge" title="${escapeHtml(result.title)}">${escapeHtml(result.title)}</span>
+      <span class="org-doc-badge" title="${escapeHtml(docTitle)}">${escapeHtml(docTitle)}</span>
     </div>
     <div class="org-topbar-right">
-      <button class="org-btn" id="org-btn-raw" title="Toggle Raw Org source text">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-        <span id="org-raw-label">${t('rawView')}</span>
+      ${openAnotherButton}
+      <button class="org-btn" id="org-btn-raw" title="${escapeHtml(t('rawView'))}">
+        ${icon('raw')}
+        <span id="org-raw-label">${escapeHtml(t('rawView'))}</span>
       </button>
-      <button class="org-btn" id="org-btn-outline" title="Toggle Outline sidebar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-        <span>${t('outline')}</span>
+      <button class="org-btn" id="org-btn-outline" title="${escapeHtml(t('outline'))}">
+        ${icon('outline')}
+        <span>${escapeHtml(t('outline'))}</span>
       </button>
-      <button class="org-btn" id="org-btn-fold-all" title="Expand or collapse all sections">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 11 12 6 17 11"></polyline><polyline points="7 17 12 12 17 17"></polyline></svg>
-        <span id="org-fold-label">${t('collapseAll')}</span>
+      <button class="org-btn" id="org-btn-fold-all" title="${escapeHtml(t('collapseAll'))}">
+        ${icon('fold')}
+        <span id="org-fold-label">${escapeHtml(t('collapseAll'))}</span>
       </button>
-      <button class="org-btn" id="org-btn-theme" title="Switch Theme">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        <span id="org-theme-label">${formatThemeLabel(currentTheme)}</span>
+      <button class="org-btn" id="org-btn-theme" title="${escapeHtml(t('themeSystem'))}">
+        ${icon('theme')}
+        <span id="org-theme-label">${escapeHtml(formatThemeLabel(currentTheme))}</span>
       </button>
-      <button class="org-btn" id="org-btn-print" title="Print document">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-        <span>${t('print')}</span>
+      <button class="org-btn" id="org-btn-print" title="${escapeHtml(t('print'))}">
+        ${icon('print')}
+        <span>${escapeHtml(t('print'))}</span>
       </button>
     </div>
   `;
-    // Build Layout
     const layout = document.createElement('div');
     layout.className = 'org-layout';
-    // Build TOC Sidebar
     const tocSidebar = document.createElement('aside');
     tocSidebar.className = `org-toc-sidebar ${settings.defaultTocExpanded ? '' : 'org-toc-hidden'}`;
     tocSidebar.id = 'org-toc-sidebar';
-    let tocHtml = `<div class="org-toc-header">${t('outline')}</div><ul class="org-toc-list">`;
+    let tocHtml = `<div class="org-toc-header">${escapeHtml(t('outline'))}</div><ul class="org-toc-list">`;
     result.toc.forEach(item => {
-        let badge = '';
-        if (item.todoState) {
-            badge = `<span class="org-toc-badge ${item.isDone ? 'org-todo-done' : 'org-todo-active'}">${escapeHtml(item.todoState)}</span> `;
-        }
+        const badge = item.todoState
+            ? `<span class="org-toc-badge ${item.isDone ? 'org-todo-done' : 'org-todo-active'}">${escapeHtml(item.todoState)}</span>`
+            : '';
         tocHtml += `
       <li class="org-toc-item org-toc-level-${item.level}" data-target="${item.id}">
         <a href="#${item.id}" class="org-toc-link" title="${escapeHtml(item.title)}">
@@ -1613,30 +2081,42 @@ function t(key, lang) {
     });
     tocHtml += `</ul>`;
     tocSidebar.innerHTML = tocHtml;
-    // Main Rendered Content
+    const resizer = document.createElement('div');
+    resizer.className = 'org-sidebar-resizer';
+    resizer.setAttribute('role', 'separator');
+    resizer.setAttribute('aria-orientation', 'vertical');
+    resizer.setAttribute('tabindex', '0');
+    resizer.title = t('resizeOutline');
+    resizer.setAttribute('aria-label', t('resizeOutline'));
     const mainContent = document.createElement('main');
     mainContent.className = 'org-content-container';
     mainContent.id = 'org-rendered-content';
     mainContent.innerHTML = result.html;
-    // Raw Content Container (Hidden by default)
+    markBrokenImages(mainContent);
     const rawContent = document.createElement('div');
     rawContent.className = 'org-content-container';
     rawContent.id = 'org-raw-content';
     rawContent.style.display = 'none';
     const rawPre = document.createElement('pre');
     rawPre.style.cssText = 'white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;line-height:1.6;margin:0;';
-    rawPre.textContent = rawText;
+    rawPre.textContent = options.rawText;
     rawContent.appendChild(rawPre);
     layout.appendChild(tocSidebar);
+    layout.appendChild(resizer);
     layout.appendChild(mainContent);
     layout.appendChild(rawContent);
     root.appendChild(topbar);
     root.appendChild(layout);
-    // Replace document body content safely
-    document.body.innerHTML = '';
-    document.body.appendChild(root);
-    // Restore Fold State
+    options.host.innerHTML = '';
+    options.host.appendChild(root);
+    initSidebarResizer(resizer, tocSidebar, settings.sidebarWidth);
     const sections = Array.from(document.querySelectorAll('.org-section'));
+    // In overlay mode (narrow windows) the panel would cover the article,
+    // so start closed there regardless of the desktop preference.
+    const overlayMode = () => window.matchMedia('(max-width: 960px)').matches;
+    if (overlayMode()) {
+        tocSidebar.classList.add('org-toc-hidden');
+    }
     if (sessionState && sessionState.foldedSectionIds) {
         sessionState.foldedSectionIds.forEach(id => {
             const sec = document.getElementById(id);
@@ -1644,21 +2124,20 @@ function t(key, lang) {
                 sec.classList.add('org-folded');
         });
     }
-    // Restore Raw view state if saved
-    let isRawView = sessionState?.rawView || false;
-    if (isRawView) {
-        toggleRawView(true);
+    function persistSessionState() {
+        if (!options.persistKey)
+            return;
+        const foldedIds = Array.from(document.querySelectorAll('.org-section.org-folded')).map(s => s.id);
+        saveSessionDocState(options.persistKey, {
+            scrollY: window.scrollY,
+            foldedSectionIds: foldedIds,
+            rawView: isRawView
+        });
     }
-    // Restore Scroll Position
-    if (sessionState && sessionState.scrollY) {
-        window.scrollTo({ top: sessionState.scrollY, behavior: 'instant' });
-    }
-    // Event Listeners
-    // 1. Heading Folding
+    // 1. Heading folding
     document.querySelectorAll('.org-heading').forEach(heading => {
-        heading.addEventListener('click', (e) => {
-            // Don't toggle fold if clicking an actual link inside the heading
-            if (e.target.closest('a'))
+        heading.addEventListener('click', (event) => {
+            if (event.target.closest('a'))
                 return;
             const section = heading.closest('.org-section');
             if (section) {
@@ -1667,10 +2146,8 @@ function t(key, lang) {
             }
         });
     });
-    // 2. Raw / Rendered Toggle
-    document.getElementById('org-btn-raw')?.addEventListener('click', () => {
-        toggleRawView(!isRawView);
-    });
+    // 2. Raw / rendered toggle
+    let isRawView = false;
     function toggleRawView(showRaw) {
         isRawView = showRaw;
         const rawBtn = document.getElementById('org-btn-raw');
@@ -1691,7 +2168,13 @@ function t(key, lang) {
         }
         persistSessionState();
     }
-    // 3. Expand / Collapse All
+    document.getElementById('org-btn-raw')?.addEventListener('click', () => {
+        toggleRawView(!isRawView);
+    });
+    if (sessionState?.rawView) {
+        toggleRawView(true);
+    }
+    // 3. Expand / collapse all
     let allCollapsed = false;
     document.getElementById('org-btn-fold-all')?.addEventListener('click', () => {
         allCollapsed = !allCollapsed;
@@ -1702,113 +2185,128 @@ function t(key, lang) {
                 sec.classList.remove('org-folded');
         });
         const foldLabel = document.getElementById('org-fold-label');
-        if (foldLabel) {
+        if (foldLabel)
             foldLabel.textContent = allCollapsed ? t('expandAll') : t('collapseAll');
-        }
         persistSessionState();
     });
-    // 4. Outline Sidebar Toggle
+    // 4. Outline sidebar toggle
     document.getElementById('org-btn-outline')?.addEventListener('click', () => {
         tocSidebar.classList.toggle('org-toc-hidden');
-        saveSettings({ defaultTocExpanded: !tocSidebar.classList.contains('org-toc-hidden') });
+        void saveSettings({ defaultTocExpanded: !tocSidebar.classList.contains('org-toc-hidden') });
     });
-    // 5. Theme Switching
+    // 5. Theme switching
     document.getElementById('org-btn-theme')?.addEventListener('click', () => {
         if (currentTheme === 'system')
             currentTheme = 'light';
         else if (currentTheme === 'light')
             currentTheme = 'dark';
+        else if (currentTheme === 'dark')
+            currentTheme = 'phycat';
         else
             currentTheme = 'system';
         applyTheme(currentTheme);
         const themeLabel = document.getElementById('org-theme-label');
         if (themeLabel)
             themeLabel.textContent = formatThemeLabel(currentTheme);
-        saveSettings({ theme: currentTheme });
+        void saveSettings({ theme: currentTheme });
     });
     // 6. Print
     document.getElementById('org-btn-print')?.addEventListener('click', () => {
         window.print();
     });
-    // 7. TOC link smooth scrolling
+    // 7. Standalone: return to the drop/paste workspace
+    if (options.onOpenAnother) {
+        document.getElementById('btn-open-another')?.addEventListener('click', options.onOpenAnother);
+    }
+    // 8. TOC link smooth scrolling
     document.querySelectorAll('.org-toc-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
             const targetId = link.getAttribute('href')?.slice(1);
             if (!targetId)
                 return;
             const targetEl = document.getElementById(targetId);
-            if (targetEl) {
-                // Expand target section if folded
-                let parentSec = targetEl;
-                while (parentSec) {
-                    if (parentSec.classList.contains('org-folded')) {
-                        parentSec.classList.remove('org-folded');
-                    }
-                    parentSec = parentSec.parentElement ? parentSec.parentElement.closest('.org-section') : null;
+            if (!targetEl)
+                return;
+            let parentSec = targetEl;
+            while (parentSec) {
+                if (parentSec.classList.contains('org-folded')) {
+                    parentSec.classList.remove('org-folded');
                 }
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                parentSec = parentSec.parentElement ? parentSec.parentElement.closest('.org-section') : null;
+            }
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (overlayMode()) {
+                tocSidebar.classList.add('org-toc-hidden');
+            }
+            if (options.mode === 'in-place') {
                 history.pushState(null, '', `#${targetId}`);
             }
         });
     });
-    // 8. Active TOC item highlight on scroll
+    // 9. Active TOC item highlight on scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-                document.querySelectorAll('.org-toc-item').forEach(item => {
-                    if (item.getAttribute('data-target') === id) {
-                        item.classList.add('org-toc-active');
-                    }
-                    else {
-                        item.classList.remove('org-toc-active');
-                    }
-                });
-            }
+            if (!entry.isIntersecting)
+                return;
+            const id = entry.target.id;
+            document.querySelectorAll('.org-toc-item').forEach(item => {
+                if (item.getAttribute('data-target') === id) {
+                    item.classList.add('org-toc-active');
+                }
+                else {
+                    item.classList.remove('org-toc-active');
+                }
+            });
         });
     }, { rootMargin: '-60px 0px -70% 0px' });
     sections.forEach(sec => observer.observe(sec));
-    // 9. Session Persistence on Scroll
+    // 10. Session persistence on scroll
     let scrollTimeout;
     window.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = window.setTimeout(persistSessionState, 150);
     }, { passive: true });
-    function persistSessionState() {
-        const foldedIds = Array.from(document.querySelectorAll('.org-section.org-folded')).map(s => s.id);
-        saveSessionDocState(currentUrl, {
-            scrollY: window.scrollY,
-            foldedSectionIds: foldedIds,
-            rawView: isRawView
-        });
+    if (sessionState && sessionState.scrollY) {
+        window.scrollTo(0, sessionState.scrollY);
     }
-    function applyTheme(theme) {
-        document.body.classList.remove('org-theme-dark', 'org-theme-light');
-        if (theme === 'dark') {
-            document.body.classList.add('org-theme-dark');
-        }
-        else if (theme === 'light') {
-            document.body.classList.add('org-theme-light');
-        }
-        else {
-            // System
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
-                document.body.classList.add('org-theme-dark');
-            }
-        }
+    return root;
+}
+
+
+  // --- renderer.js ---
+  /**
+ * Org Viewer In-Place Renderer Bundle.
+ * Injected dynamically by the background service worker when an Org file is detected.
+ * Delegates all UI construction to the shared shell so every render path matches.
+ */
+
+(async function initRenderer() {
+    if (window.__ORG_VIEWER_MOUNTED__)
+        return;
+    const pre = document.querySelector('body > pre');
+    const isPlainText = document.contentType === 'text/plain' ||
+        Boolean(pre && document.body.children.length === 1);
+    if (!isPlainText)
+        return;
+    const rawText = pre ? pre.textContent || '' : document.body.textContent || '';
+    if (!rawText.trim())
+        return;
+    window.__ORG_VIEWER_MOUNTED__ = true;
+    let docName = '';
+    try {
+        docName = decodeURIComponent(window.location.pathname.split('/').pop() || '');
     }
-    function formatThemeLabel(theme) {
-        if (theme === 'light')
-            return t('themeLight');
-        if (theme === 'dark')
-            return t('themeDark');
-        return t('themeSystem');
+    catch {
+        docName = window.location.pathname.split('/').pop() || '';
     }
-    function escapeHtml(text) {
-        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
+    await mountOrgShell({
+        rawText,
+        docName,
+        host: document.body,
+        mode: 'in-place',
+        persistKey: window.location.href
+    });
 })();
 
 })();

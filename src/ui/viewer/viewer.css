@@ -1,4 +1,4 @@
-﻿body {
+body {
   margin: 0;
   padding: 0;
   background-color: var(--org-canvas-subtle);
@@ -53,6 +53,13 @@
   display: flex;
   justify-content: center;
   gap: 12px;
+}
+
+.file-error {
+  min-height: 18px;
+  margin: 10px 0 0;
+  color: #cf222e;
+  font-size: 12px;
 }
 
 .file-btn {

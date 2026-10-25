@@ -26,6 +26,7 @@ function applyI18n(lang) {
     document.getElementById('opt-theme-system').textContent = t('themeSystem', lang);
     document.getElementById('opt-theme-light').textContent = t('themeLight', lang);
     document.getElementById('opt-theme-dark').textContent = t('themeDark', lang);
+    document.getElementById('opt-theme-phycat').textContent = t('themePhycat', lang);
     document.getElementById('label-outline').textContent = t('optionsOutlineLabel', lang);
     document.getElementById('desc-outline').textContent = lang === 'zh_CN'
         ? '文档加载时左侧目录大纲栏是否默认展开。'
@@ -83,7 +84,7 @@ async function init() {
     toggleWeb.addEventListener('change', async () => {
         if (toggleWeb.checked) {
             if (typeof chrome !== 'undefined' && chrome.permissions) {
-                chrome.permissions.request({ origins: ['*://*/*.org*', '*://*/*.ORG*'] }, async (granted) => {
+                chrome.permissions.request({ origins: ['*://*/*'] }, async (granted) => {
                     if (granted) {
                         await saveSettings({ webRenderingEnabled: true });
                         showToast();
@@ -101,7 +102,7 @@ async function init() {
         }
         else {
             if (typeof chrome !== 'undefined' && chrome.permissions) {
-                chrome.permissions.remove({ origins: ['*://*/*.org*', '*://*/*.ORG*'] });
+                chrome.permissions.remove({ origins: ['*://*/*'] });
             }
             await saveSettings({ webRenderingEnabled: false });
             showToast();

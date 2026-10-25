@@ -4,3 +4,10 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+.chrome-smoke/
+
+# Compiled from TypeScript by `npm run build`; never edit or commit these.
+src/**/*.js
+
+# Ad-hoc local check scripts
+.tmp-*

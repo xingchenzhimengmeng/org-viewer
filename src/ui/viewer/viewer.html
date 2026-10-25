@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../styles/github-theme.css">
   <link rel="stylesheet" href="../styles/toc.css">
   <link rel="stylesheet" href="../styles/print.css">
+  <link rel="stylesheet" href="../styles/phycat-theme.css">
   <link rel="stylesheet" href="viewer.css">
 </head>
 <body>
@@ -28,10 +29,11 @@
       <div class="drop-actions">
         <label class="btn btn-primary file-btn">
           <span>Choose .org File</span>
-          <input type="file" id="file-input" accept=".org,.txt" style="display:none;" />
+          <input type="file" id="file-input" accept=".org" style="display:none;" />
         </label>
         <button class="btn btn-secondary" id="btn-load-sample">Load Sample</button>
       </div>
+      <p class="file-error" id="file-error" role="alert"></p>
 
       <div class="paste-section">
         <div class="divider"><span>OR PASTE TEXT</span></div>

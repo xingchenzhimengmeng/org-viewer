@@ -1,6 +1,6 @@
 ﻿/**
  * Internationalization helper for Org Viewer.
- * Supports manual language switching (zh_CN and en) and automatic IP / location detection.
+ * Supports manual language switching (zh_CN and en) and locale detection.
  */
 
 export type SupportedLanguage = 'zh_CN' | 'en';
@@ -14,9 +14,11 @@ export const MESSAGES: Record<SupportedLanguage, Record<string, string>> = {
     expandAll: "Expand All",
     collapseAll: "Collapse All",
     outline: "Outline",
+    resizeOutline: "Drag to resize outline, double-click to reset",
     themeSystem: "System Theme",
     themeLight: "Light Theme",
     themeDark: "Dark Theme",
+    themePhycat: "Phycat Theme",
     print: "Print Document",
     largeFileWarning: "This file is larger than 5MB. Automatic rendering was paused to preserve performance.",
     renderAnyway: "Render Anyway",
@@ -45,6 +47,19 @@ export const MESSAGES: Record<SupportedLanguage, Record<string, string>> = {
     statusEnabled: "Status: Enabled. Local file:///*.org files will be rendered.",
     statusDisabled: "Status: Disabled. Click Manage Permission to enable 'Allow access to file URLs'.",
     optionsSave: "Settings saved",
+    popupReady: "Ready to preview .org files",
+    popupRenderCurrent: "Render this .org file",
+    popupOpenViewer: "Open viewer",
+    popupChooseOrg: "Choose .org file",
+    popupLocalAccess: "Local file access",
+    popupAccessEnabled: "Enabled",
+    popupAccessDisabled: "Not enabled",
+    popupEnableAccess: "Enable local file access",
+    popupManageAccess: "Manage",
+    popupSettings: "Settings",
+    popupOnlyOrg: "Only .org files are supported.",
+    popupRendering: "Rendering...",
+    popupRenderComplete: "The current page has been rendered.",
     welcomeTitle: "Welcome to Org Viewer",
     welcomeStep1: "Enable Local File Access",
     welcomeStep1Desc: "Chrome requires manual permission for extensions to read local file:/// URLs. To view your local .org notes:",
@@ -62,9 +77,11 @@ export const MESSAGES: Record<SupportedLanguage, Record<string, string>> = {
     expandAll: "全部展开",
     collapseAll: "全部折叠",
     outline: "大纲目录",
+    resizeOutline: "拖拽调整大纲宽度，双击恢复默认",
     themeSystem: "跟随系统",
     themeLight: "浅色模式",
     themeDark: "深色模式",
+    themePhycat: "Phycat 主题",
     print: "打印文档",
     largeFileWarning: "此文件大于 5MB，已暂停自动渲染以保护浏览器性能。",
     renderAnyway: "仍然渲染",
@@ -93,6 +110,19 @@ export const MESSAGES: Record<SupportedLanguage, Record<string, string>> = {
     statusEnabled: "状态：已开启。本地 file:///*.org 文件将自动接管渲染。",
     statusDisabled: "状态：未开启。请点击“前往设置”开启“允许访问文件网址”。",
     optionsSave: "设置已保存",
+    popupReady: "可预览 .org 文件",
+    popupRenderCurrent: "渲染当前 .org 文件",
+    popupOpenViewer: "打开预览器",
+    popupChooseOrg: "选择 .org 文件",
+    popupLocalAccess: "本地文件权限",
+    popupAccessEnabled: "已开启",
+    popupAccessDisabled: "未开启",
+    popupEnableAccess: "开启本地文件权限",
+    popupManageAccess: "管理",
+    popupSettings: "设置",
+    popupOnlyOrg: "仅支持 .org 文件。",
+    popupRendering: "正在渲染...",
+    popupRenderComplete: "当前页面已渲染完成。",
     welcomeTitle: "欢迎使用 Org Viewer",
     welcomeStep1: "第一步：开启本地文件访问权限",
     welcomeStep1Desc: "出于安全考虑，Chrome 默认禁止扩展直接读取 file:/// 网址。如需预览本地 .org 文件：",
@@ -142,39 +172,6 @@ export function detectDefaultLanguage(): SupportedLanguage {
     // ignore
   }
   return 'en';
-}
-
-/**
- * Asynchronously detects user country via public lightweight GeoIP service.
- * If country is China (CN), returns zh_CN; otherwise returns en.
- * Times out gracefully after 1.5s to fall back to timezone / locale detection.
- */
-export async function detectLanguageByIp(): Promise<SupportedLanguage> {
-  const fallback = detectDefaultLanguage();
-  if (typeof fetch === 'undefined') return fallback;
-
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 1500);
-
-    // Free, lightweight public GeoIP lookup (country code only, zero data sent)
-    const res = await fetch('https://api.country.is/', {
-      signal: controller.signal
-    }).catch(() => null);
-
-    clearTimeout(timer);
-
-    if (res && res.ok) {
-      const data = await res.json().catch(() => null);
-      if (data && data.country) {
-        return data.country.toUpperCase() === 'CN' ? 'zh_CN' : 'en';
-      }
-    }
-  } catch {
-    // Network unavailable or blocked, safely fallback
-  }
-
-  return fallback;
 }
 
 export function t(key: string, lang?: SupportedLanguage): string {

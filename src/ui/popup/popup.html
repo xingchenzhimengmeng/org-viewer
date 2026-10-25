@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org Viewer</title>
+  <link rel="stylesheet" href="../styles/github-theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="popup-body">
+  <header class="popup-header">
+    <img src="../../../icons/icon48.png" alt="" class="popup-logo">
+    <div class="popup-heading">
+      <h1>Org Viewer</h1>
+      <p id="current-document">Ready to preview .org files</p>
+    </div>
+  </header>
+
+  <main class="popup-main">
+    <button type="button" class="action-btn action-primary" id="primary-action">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+      <span id="primary-label">Open viewer</span>
+    </button>
+
+    <label class="action-btn action-secondary file-action">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="12" y1="18" x2="12" y2="12"></line>
+        <line x1="9" y1="15" x2="12" y2="12"></line>
+        <line x1="15" y1="15" x2="12" y2="12"></line>
+      </svg>
+      <span id="choose-label">Choose .org file</span>
+      <input type="file" id="file-input" accept=".org" hidden>
+    </label>
+
+    <button type="button" class="action-btn action-secondary" id="open-viewer">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15 3h6v6"></path>
+        <path d="M10 14 21 3"></path>
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+      </svg>
+      <span id="viewer-label">Open viewer</span>
+    </button>
+
+    <p class="popup-message" id="popup-message" role="status" aria-live="polite"></p>
+  </main>
+
+  <section class="access-row" aria-labelledby="access-label">
+    <span class="access-indicator" id="access-indicator"></span>
+    <div class="access-copy">
+      <span class="access-label" id="access-label">Local file access</span>
+      <span class="access-value" id="access-value">Checking...</span>
+    </div>
+    <button type="button" class="text-btn" id="manage-access">Manage</button>
+  </section>
+
+  <footer class="popup-footer">
+    <button type="button" class="text-btn" id="open-settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.92a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.14.6.66 1.02 1.28 1.02H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span id="settings-label">Settings</span>
+    </button>
+    <span class="version-label">v1.0.0</span>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

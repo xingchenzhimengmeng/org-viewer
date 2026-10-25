@@ -48,8 +48,19 @@ function slugify(text: string): string {
 export function formatInline(text: string): string {
   if (!text) return '';
 
+  // Math spans are stashed first so verbatim/bold/italic passes cannot chew on
+  // LaTeX (and vice versa); placeholders are restored after all other passes.
+  const mathSpans: string[] = [];
+  const stashMath = (html: string): string => {
+    mathSpans.push(html);
+    return `\u0000${mathSpans.length - 1}\u0000`;
+  };
+  let res = text.replace(/\$\$([^$\n]+)\$\$/g, (_, math) => stashMath(latexToMathML(math, true)));
+  res = res.replace(/\$([^$\n]+)\$/g, (_, math) => stashMath(latexToMathML(math, false)));
+  res = res.replace(/\\\(([^\n]+?)\\\)/g, (_, math) => stashMath(latexToMathML(math, false)));
+
   // 1. Links & Images: [[target][description]] or [[target]]
-  let res = text.replace(/\[\[([^\]]+)\](?:\[([^\]]*)\])?\]/g, (_, target, desc) => {
+  res = res.replace(/\[\[([^\]]+)\](?:\[([^\]]*)\])?\]/g, (_, target, desc) => {
     let rawTarget = target.trim();
 
     // Normalize file: prefix (e.g. file:img.png -> img.png)
@@ -112,26 +123,23 @@ export function formatInline(text: string): string {
   });
 
   // 5. Code: ~code~ and =verbatim=
-  res = res.replace(/(^|[\s({\[])~([^~\n]+)~([)\]}\s.,!?:;'\-]|$)/g, '$1<code class="org-code">$2</code>$3');
-  res = res.replace(/(^|[\s({\[])=([^=\n]+)=([)\]}\s.,!?:;'\-]|$)/g, '$1<code class="org-verbatim">$2</code>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])~([^~\n]+)~([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<code class="org-code">$2</code>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])=([^=\n]+)=([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<code class="org-verbatim">$2</code>$3');
 
   // 6. Bold: *bold*
-  res = res.replace(/(^|[\s({\[])\*([^*\n\s](?:[^*\n]*[^*\n\s])?)\*([)\]}\s.,!?:;'\-]|$)/g, '$1<strong>$2</strong>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])\*([^*\n\s](?:[^*\n]*[^*\n\s])?)\*([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<strong>$2</strong>$3');
 
   // 7. Italic: /italic/
-  res = res.replace(/(^|[\s({\[])\/([^\/\n\s](?:[^\/\n]*[^\/\n\s])?)\/([)\]}\s.,!?:;'\-]|$)/g, '$1<em>$2</em>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])\/([^\/\n\s](?:[^\/\n]*[^\/\n\s])?)\/([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<em>$2</em>$3');
 
   // 8. Underline: _underline_
-  res = res.replace(/(^|[\s({\[])_([^_\n\s](?:[^_\n]*[^_\n\s])?)_([)\]}\s.,!?:;'\-]|$)/g, '$1<u>$2</u>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])_([^_\n\s](?:[^_\n]*[^_\n\s])?)_([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<u>$2</u>$3');
 
   // 9. Strikethrough: +strike+
-  res = res.replace(/(^|[\s({\[])\+([^\+\n\s](?:[^\+\n]*[^\+\n\s])?)\+([)\]}\s.,!?:;'\-]|$)/g, '$1<del>$2</del>$3');
+  res = res.replace(/(^|[\s({\[（《【“‘])\+([^\+\n\s](?:[^\+\n]*[^\+\n\s])?)\+([)\]}\s.,!?:;'\-）》】”’]|$)/gu, '$1<del>$2</del>$3');
 
-  // 10. Inline Math: $...$ or \(...\) -> Native MathML
-  res = res.replace(/\$([^\$\n]+)\$/g, (_, math) => latexToMathML(math, false));
-  res = res.replace(/\\\(([^\n]+?)\\\)/g, (_, math) => latexToMathML(math, false));
-
-  return res;
+  // 10. Restore stashed MathML
+  return res.replace(/\u0000(\d+)\u0000/g, (_, index) => mathSpans[Number(index)]);
 }
 
 export function compileOrg(orgText: string): CompileResult {
@@ -155,6 +163,9 @@ export function compileOrg(orgText: string): CompileResult {
 
   let inExportBlock = false;
   let exportLines: string[] = [];
+
+  let inCenterBlock = false;
+  let centerLines: string[] = [];
 
   let inCommentBlock = false;
 
@@ -246,10 +257,19 @@ export function compileOrg(orgText: string): CompileResult {
     if (/^#\+END_SRC/i.test(trimmed)) {
       inSrcBlock = false;
       const highlighted = highlightCode(srcLines.join('\n'), srcLang);
+      const linesHtml = highlighted
+        .split('\n')
+        .map((lineHtml) => `<span class="org-code-line">${lineHtml}</span>`)
+        .join('');
+      const captionHtml = pendingCaption
+        ? `<div class="org-block-caption">${formatInline(pendingCaption)}</div>`
+        : '';
+      pendingCaption = '';
       out.push(
+        captionHtml +
         `<div class="org-src-block">` +
         `<div class="org-src-header"><span class="org-src-lang">${escapeHtml(srcLang || 'text')}</span></div>` +
-        `<pre><code class="language-${escapeHtml(srcLang || 'text')}">${highlighted}</code></pre>` +
+        `<pre><code class="language-${escapeHtml(srcLang || 'text')}">${linesHtml}</code></pre>` +
         `</div>`
       );
       continue;
@@ -318,6 +338,36 @@ export function compileOrg(orgText: string): CompileResult {
       continue;
     }
     if (inCommentBlock) {
+      continue;
+    }
+
+    if (/^#\+BEGIN_CENTER/i.test(trimmed)) {
+      closeBlocks();
+      inCenterBlock = true;
+      centerLines = [];
+      continue;
+    }
+    if (/^#\+END_CENTER/i.test(trimmed)) {
+      inCenterBlock = false;
+      out.push(`<div class="org-center" style="text-align: center;"><p>${formatInline(centerLines.join(' '))}</p></div>`);
+      continue;
+    }
+    if (inCenterBlock) {
+      centerLines.push(rawLine);
+      continue;
+    }
+
+    // Comments: line starting with # followed by whitespace, or solitary #
+    if (/^#[ \t]+/.test(rawLine) || rawLine.trim() === '#') {
+      continue;
+    }
+
+    // Include directives: #+INCLUDE: "..."
+    const incMatch = trimmed.match(/^#\+INCLUDE:[ \t]*"?([^"\n]+)"?/i);
+    if (incMatch) {
+      closeBlocks();
+      const incPath = incMatch[1].trim();
+      out.push(`<div class="org-include-card"><span class="org-include-badge">&#128196; INCLUDE</span> <code class="org-include-path">${escapeHtml(incPath)}</code></div>`);
       continue;
     }
 
@@ -560,6 +610,21 @@ export function compileOrg(orgText: string): CompileResult {
     }
 
     // 12. Normal paragraph
+    // A lone image link preceded by #+CAPTION becomes a captioned figure.
+    const soloImage = trimmed.match(/^\[\[([^\]]+)\](?:\[([^\]]*)\])?\]$/);
+    if (
+      soloImage && pendingCaption && !soloImage[2] &&
+      /\.(png|jpe?g|gif|svg|webp|bmp)(?:\?[^\]]*)?$/i.test(soloImage[1].trim())
+    ) {
+      const figure = formatInline(trimmed).replace(
+        '</figure>',
+        `<figcaption>${formatInline(pendingCaption)}</figcaption></figure>`
+      );
+      pendingCaption = '';
+      out.push(figure);
+      continue;
+    }
+
     out.push(`<p>${formatInline(rawLine)}</p>`);
   }
 

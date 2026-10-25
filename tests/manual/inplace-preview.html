@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>In-Place Render Preview</title>
+  <!-- Mirrors exactly what the background service worker injects into file:// pages,
+       so the in-place rendering can be inspected without installing the extension. -->
+  <link rel="stylesheet" href="../../src/ui/styles/github-theme.css">
+  <link rel="stylesheet" href="../../src/ui/styles/toc.css">
+  <link rel="stylesheet" href="../../src/ui/styles/print.css">
+  <link rel="stylesheet" href="../../src/ui/styles/phycat-theme.css">
+  <script>
+    const docPath = new URLSearchParams(location.search).get('doc') || '/test_org.org';
+    fetch(docPath)
+      .then((response) => response.text())
+      .then((text) => {
+        const pre = document.createElement('pre');
+        pre.textContent = text;
+        document.body.appendChild(pre);
+        const script = document.createElement('script');
+        script.src = '/src/content/renderer.js';
+        document.head.appendChild(script);
+      });
+  </script>
+</head>
+<body></body>
+</html>

@@ -1,0 +1,276 @@
+#+TITLE: Org Viewer Showcase
+#+AUTHOR: Org Viewer Team
+#+DATE: 2026-10-25
+
+* Images
+Inline link image: [[../../icons/icon48.png]] inside a paragraph.
+
+Standalone image with description:
+
+[[../../icons/icon128.png][Org Viewer icon]]
+
+#+CAPTION: Figure 1: The Org Viewer mark, captioned via #+CAPTION.
+[[../../icons/icon128.png]]
+
+Missing relative image (standalone viewer cannot resolve sibling files), shown as a labelled placeholder:
+
+[[./does-not-exist.png]]
+
+* Code Highlighting
+** Python
+#+BEGIN_SRC python
+from dataclasses import dataclass
+import asyncio
+
+# Retry a flaky request with exponential backoff
+@dataclass
+class Client:
+    base_url: str
+    timeout: float = 3.5
+
+    async def fetch(self, path: str, retries: int = 3) -> dict:
+        """Return decoded JSON for *path*."""
+        for attempt in range(retries):
+            try:
+                return await self._get(path)
+            except TimeoutError as exc:
+                delay = 0.25 * (2 ** attempt)
+                print(f"retry {attempt}: {exc}")
+                await asyncio.sleep(delay)
+        raise RuntimeError("gave up")
+#+END_SRC
+
+** TypeScript
+#+BEGIN_SRC typescript
+interface Theme { name: string; dark: boolean }
+
+export async function loadThemes(url: string): Promise<Theme[]> {
+  const response = await fetch(url);           // network call
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const themes = (await response.json()) as Theme[];
+  return themes.filter((t) => t.name.length > 0);
+}
+/* multi-line
+   comment continuation check */
+#+END_SRC
+
+** Java
+#+BEGIN_SRC java
+public record Point(int x, int y) {
+    @Override
+    public String toString() {
+        return String.format("(%d, %d)", x, y);
+    }
+
+    public static List<Point> parse(String[] rows) {
+        List<Point> out = new ArrayList<>();
+        for (String row : rows) {
+            String[] parts = row.split(",");
+            out.add(new Point(Integer.parseInt(parts[0]), Integer.parseInt(parts[1])));
+        }
+        return out;
+    }
+}
+#+END_SRC
+
+** C
+#+BEGIN_SRC c
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Ring buffer of 0x100 samples */
+int main(int argc, char **argv) {
+    double *buf = malloc(sizeof(double) * 256);
+    if (buf == NULL) return 1;
+    for (size_t i = 0; i < 256; i++) buf[i] = i / 3.5;
+    printf("sum=%f\n", buf[255]);
+    free(buf);
+    return 0;
+}
+#+END_SRC
+
+** C++
+#+BEGIN_SRC cpp
+namespace geo {
+template <typename T>
+class Polygon {
+ public:
+  void push(const std::pair<T, T>& p) { pts_.emplace_back(p); }
+  [[nodiscard]] std::size_t size() const noexcept { return pts_.size(); }
+
+ private:
+  std::vector<std::pair<T, T>> pts_;
+};
+}  // namespace geo
+#+END_SRC
+
+** C#
+#+BEGIN_SRC csharp
+using System.Collections.Generic;
+
+public sealed class Registry {
+    private readonly Dictionary<string, int> _counts = new();
+
+    public int Bump(string key) {
+        _counts.TryGetValue(key, out var current);
+        _counts[key] = current + 1;
+        return _counts[key];
+    }
+}
+#+END_SRC
+
+** Go
+#+BEGIN_SRC go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func worker(id int, jobs <-chan int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for j := range jobs {
+		fmt.Printf("worker %d processed %d\n", id, j*2)
+	}
+}
+#+END_SRC
+
+** Rust
+#+BEGIN_SRC rust
+use std::collections::HashMap;
+
+#[derive(Debug, Clone)]
+struct Stats { hits: u64 }
+
+fn tally(keys: &[&str]) -> HashMap<&str, Stats> {
+    let mut map = HashMap::new();
+    for key in keys {
+        let entry = map.entry(*key).or_insert(Stats { hits: 0 });
+        entry.hits += 1;
+    }
+    map
+}
+#+END_SRC
+
+** Kotlin
+#+BEGIN_SRC kotlin
+data class User(val id: Int, val name: String)
+
+fun greet(users: List<User>): String =
+    users.filter { it.id > 0 }
+         .joinToString(separator = ", ") { "Hi ${it.name}" }
+#+END_SRC
+
+** Ruby
+#+BEGIN_SRC ruby
+module Greeter
+  def self.hello(names)
+    names.map { |n| "Hello, #{n}!" }.each(&method(:puts))
+  end
+end
+#+END_SRC
+
+** PHP
+#+BEGIN_SRC php
+<?php
+declare(strict_types=1);
+
+final class Cart {
+    /** @var array<int, float> */
+    private array $prices = [];
+
+    public function total(): float {
+        return array_sum($this->prices);
+    }
+}
+#+END_SRC
+
+** SQL
+#+BEGIN_SRC sql
+-- Top customers by revenue in 2026
+SELECT c.name, SUM(o.amount) AS revenue
+FROM orders o
+JOIN customers c ON c.id = o.customer_id
+WHERE o.created_at >= '2026-01-01'
+GROUP BY c.name
+HAVING SUM(o.amount) > 1000
+ORDER BY revenue DESC
+LIMIT 10;
+#+END_SRC
+
+** Bash
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in "$@"; do           # iterate arguments
+  size=$(stat -c %s "$f")
+  echo "$f is $size bytes"
+done
+#+END_SRC
+
+** JSON
+#+BEGIN_SRC json
+{
+  "theme": "phycat",
+  "sidebarWidth": 288,
+  "features": ["outline", "math", "highlight"],
+  "beta": false
+}
+#+END_SRC
+
+** HTML
+#+BEGIN_SRC html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sample</title>
+  </head>
+  <body class="demo" data-ready="true">
+    <!-- navigation -->
+    <a href="/docs" target="_blank">Docs</a>
+  </body>
+</html>
+#+END_SRC
+
+** CSS
+#+BEGIN_SRC css
+/* Sidebar layout */
+.org-toc-sidebar {
+  position: sticky;
+  top: 48px;
+  width: clamp(180px, 20vw, 420px);
+  background: rgba(52, 152, 219, 0.08);
+}
+
+@media (max-width: 960px) {
+  .org-toc-sidebar { position: fixed; }
+}
+#+END_SRC
+
+** YAML
+#+BEGIN_SRC yaml
+# deployment config
+service: org-viewer
+replicas: 3
+resources:
+  cpu: 0.5
+  memory: 256Mi
+enabled: true
+tags:
+  - web
+  - docs
+#+END_SRC
+
+** Emacs Lisp
+#+BEGIN_SRC elisp
+;; Fold all sections in the current buffer
+(defun org-viewer-fold-all ()
+  (interactive)
+  (let ((count 0))
+    (dolist (sec (org-map-entries 'point))
+      (setq count (1+ count)))
+    (message "folded %d sections" count)))
+#+END_SRC

@@ -1,0 +1,182 @@
+/* Phycat theme: a literary, airy reading theme inspired by the Typora
+ * "Phycat" theme family (sky palette). Selected explicitly from Settings;
+ * it never changes the default appearance. Dark variant follows the system
+ * preference while the theme is active. */
+
+body.org-theme-phycat {
+  --org-bg: #fbfdff;
+  --org-fg: #333333;
+  --org-fg-muted: #7f8c9a;
+  --org-border: #d6e4f0;
+  --org-border-muted: #e4eef7;
+  --org-canvas-subtle: #eaf2f8;
+  --org-accent: #3498db;
+  --org-accent-subtle: #eaf2f8;
+
+  --org-todo-bg: #e05252;
+  --org-done-bg: #27ae60;
+  --org-prio-bg: #8e44ad;
+  --org-tag-bg: #eaf2f8;
+  --org-tag-fg: #2980b9;
+
+  --org-code-bg: #ebf5fb;
+  --org-editor-bg: #f2f9ff;
+  --org-editor-fg: #16324a;
+  --org-editor-border: #cfe3f5;
+  --org-editor-header-bg: #e1effa;
+  --org-editor-line-no: #85b8dc;
+
+  --org-font-family: Optima, "LXGW WenKai", "PingFang SC", "Noto Sans SC", "Segoe UI", Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.org-theme-phycat {
+    --org-bg: #10161c;
+    --org-fg: #d6e2ec;
+    --org-fg-muted: #8fa3b5;
+    --org-border: #263646;
+    --org-border-muted: #1d2a37;
+    --org-canvas-subtle: #16202a;
+    --org-accent: #4aa3e0;
+    --org-accent-subtle: rgba(52, 152, 219, 0.16);
+
+    --org-todo-bg: #d05454;
+    --org-done-bg: #2f9e63;
+    --org-prio-bg: #a06eb4;
+    --org-tag-bg: #1d2a37;
+    --org-tag-fg: #7db8e8;
+
+    --org-code-bg: rgba(74, 163, 224, 0.14);
+    --org-editor-bg: #1e1e1e;
+    --org-editor-fg: #d4d4d4;
+    --org-editor-border: #333333;
+    --org-editor-header-bg: #252526;
+    --org-editor-line-no: #6e7681;
+  }
+}
+
+/* Faint cross-hatch paper texture behind the whole document */
+body.org-theme-phycat .org-viewer-root {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0z' fill='none'/%3E%3Cpath d='M0 0l20 20M20 0L0 20' stroke='%233498db' stroke-opacity='0.05' stroke-width='0.7'/%3E%3C/svg%3E");
+}
+
+body.org-theme-phycat .org-content-container {
+  line-height: 1.95;
+}
+
+/* H1: centered with a short accent bar underneath */
+body.org-theme-phycat .org-doc-title {
+  text-align: center;
+  width: fit-content;
+  min-width: 120px;
+  margin: 0 auto 12px;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+body.org-theme-phycat .org-doc-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--org-accent);
+}
+
+body.org-theme-phycat .org-doc-header {
+  text-align: center;
+  border-bottom: none;
+}
+
+/* H2: white text on a gradient ribbon */
+body.org-theme-phycat .org-level-2 > .org-heading {
+  width: fit-content;
+  color: #ffffff;
+  padding: 5px 14px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #85c1e9, #3498db, #85c1e9);
+  background-size: 200% auto;
+  background-position: 0 center;
+  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.25);
+  transition: background-position 0.5s ease-out;
+}
+
+body.org-theme-phycat .org-level-2 > .org-heading:hover {
+  background-position: 100% center;
+}
+
+body.org-theme-phycat .org-level-2 > .org-heading .org-heading-content {
+  color: #ffffff;
+}
+
+/* H3: accent pill on the left */
+body.org-theme-phycat .org-level-3 > .org-heading {
+  position: relative;
+  width: fit-content;
+  padding-left: 12px;
+}
+
+body.org-theme-phycat .org-level-3 > .org-heading::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 62%;
+  border-radius: 4px;
+  background-color: var(--org-accent);
+}
+
+/* H4 and deeper: small dot marker */
+body.org-theme-phycat .org-level-4 > .org-heading::before,
+body.org-theme-phycat .org-level-5 > .org-heading::before,
+body.org-theme-phycat .org-level-6 > .org-heading::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: var(--org-accent);
+}
+
+/* Blockquote: tinted panel with accent rail */
+body.org-theme-phycat blockquote {
+  border-left: 4px solid var(--org-accent);
+  background-color: var(--org-canvas-subtle);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 16px;
+  color: var(--org-fg);
+}
+
+/* Tables: sky-tinted header */
+body.org-theme-phycat .org-table th {
+  background-color: var(--org-canvas-subtle);
+  color: var(--org-tag-fg);
+}
+
+/* Outline sidebar accents */
+body.org-theme-phycat .org-toc-header {
+  color: var(--org-accent);
+}
+
+body.org-theme-phycat .org-toc-item.org-toc-active > .org-toc-link {
+  background-color: var(--org-accent-subtle);
+  color: var(--org-accent);
+  border-left: 3px solid var(--org-accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  body.org-theme-phycat .org-level-2 > .org-heading {
+    background: linear-gradient(to right, #1f5f8b, #2980b9, #1f5f8b);
+    background-size: 200% auto;
+  }
+
+  body.org-theme-phycat .org-viewer-root {
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0z' fill='none'/%3E%3Cpath d='M0 0l20 20M20 0L0 20' stroke='%234aa3e0' stroke-opacity='0.06' stroke-width='0.7'/%3E%3C/svg%3E");
+  }
+}

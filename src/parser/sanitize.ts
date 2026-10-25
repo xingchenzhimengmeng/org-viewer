@@ -39,7 +39,7 @@ const ALLOWED_ATTRS: Record<string, Set<string>> = {
   'rect': new Set(['x', 'y', 'width', 'height', 'rx', 'ry']),
   // MathML attributes
   'math': new Set(['xmlns', 'display']),
-  'mo': new Set(['stretchy', 'fence', 'separator', 'lspace', 'rspace']),
+  'mo': new Set(['stretchy', 'fence', 'separator', 'lspace', 'rspace', 'accent']),
   'mtable': new Set(['columnalign', 'rowalign']),
   'mtd': new Set(['columnalign', 'rowalign']),
   'mtext': new Set(['mathvariant'])

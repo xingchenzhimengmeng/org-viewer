@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install build dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build distribution package
+        run: npm run build
+
+      - name: Publish GitHub release with the store-ready zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/org-viewer-*.zip
+          generate_release_notes: true

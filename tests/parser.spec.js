@@ -191,6 +191,16 @@ describe('Org-mode Compiler & Parser', () => {
     assert.match(res.html, /<msubsup><mo>∫<\/mo>/);
   });
 
+  it('renders math accents and dot leaders', () => {
+    const res = compileOrg(fs.readFileSync('tests/fixtures/32-math-accents.org', 'utf8'));
+    assert.match(res.html, /<mover><mrow><mi>y<\/mi><\/mrow><mo accent="true">ˆ<\/mo><\/mover>/);
+    assert.match(res.html, /<mover><mrow><mi>x<\/mi><\/mrow><mo accent="true" stretchy="true">‾<\/mo><\/mover>/);
+    assert.match(res.html, /<mover><mrow><mi>v<\/mi><\/mrow><mo accent="true" stretchy="true">→<\/mo><\/mover>/);
+    assert.match(res.html, /…/);
+    assert.doesNotMatch(res.html, />hat</);
+    assert.doesNotMatch(res.html, />dots</);
+  });
+
   it('renders document metadata header (title, author, date)', () => {
     const res = compileOrg(fs.readFileSync('tests/fixtures/30-document-metadata.org', 'utf8'));
     assert.strictEqual(res.title, 'Research Paper Draft');
@@ -207,5 +217,29 @@ describe('Org-mode Compiler & Parser', () => {
     assert.match(res.html, /org-todo-done">DONE/);
     assert.match(res.html, /org-todo-active">IN-DEV/);
     assert.match(res.html, /<table class="org-table">/);
+  });
+
+  // The source document for this fixture is not distributed with the repo.
+  const realWorldIt = fs.existsSync('test_12.org') ? it : it.skip;
+  realWorldIt('compiles the real-world test_12.org file with full fidelity', () => {
+    const orgContent = fs.readFileSync('test_12.org', 'utf8');
+    const res = compileOrg(orgContent);
+
+    assert.strictEqual(res.title, '报告正文（2026版）');
+    assert.strictEqual(res.toc.length, 15);
+    assert.strictEqual(res.toc[0].title, '（一）立项依据');
+    assert.strictEqual(res.toc[0].level, 1);
+    assert.strictEqual(res.toc[1].level, 2);
+
+    // Verify center block
+    assert.match(res.html, /<div class="org-center"/);
+    assert.match(res.html, /<strong>报告正文（2026版）<\/strong>/);
+
+    // Verify include cards
+    assert.match(res.html, /class="org-include-card"/);
+    assert.match(res.html, /extraTex\/1\.1\.立项依据\.tex/);
+
+    // Verify comments were not rendered as paragraphs
+    assert.doesNotMatch(res.html, /<p># 国家自然科学基金/);
   });
 });

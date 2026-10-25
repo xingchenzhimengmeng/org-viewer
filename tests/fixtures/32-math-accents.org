@@ -1,0 +1,6 @@
+#+TITLE: Math Accents
+
+* Regression model
+The fitted value $\hat{y}_i = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \epsilon$ uses accents.
+
+$$\overline{x} + \vec{v} + \tilde{\theta} + \dot{a} + \ddot{b}$$

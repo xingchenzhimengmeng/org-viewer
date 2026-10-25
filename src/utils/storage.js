@@ -9,19 +9,21 @@ function getDefaultSettings() {
         theme: 'system',
         defaultTocExpanded: true,
         webRenderingEnabled: false,
-        language: detectDefaultLanguage()
+        language: detectDefaultLanguage(),
+        sidebarWidth: 0
     };
 }
 export async function getSettings() {
     const defaults = getDefaultSettings();
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         try {
-            const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language']);
+            const res = await chrome.storage.sync.get(['theme', 'defaultTocExpanded', 'webRenderingEnabled', 'language', 'sidebarWidth']);
             const settings = {
                 theme: res.theme ?? defaults.theme,
                 defaultTocExpanded: res.defaultTocExpanded ?? defaults.defaultTocExpanded,
                 webRenderingEnabled: res.webRenderingEnabled ?? defaults.webRenderingEnabled,
-                language: res.language ?? defaults.language
+                language: res.language ?? defaults.language,
+                sidebarWidth: typeof res.sidebarWidth === 'number' ? res.sidebarWidth : defaults.sidebarWidth
             };
             setActiveLanguage(settings.language);
             return settings;

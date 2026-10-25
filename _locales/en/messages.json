@@ -138,5 +138,44 @@
   },
   "statusDisabled": {
     "message": "Status: Disabled. Click Manage Permission to enable 'Allow access to file URLs'."
+  },
+  "popupReady": {
+    "message": "Ready to preview .org files"
+  },
+  "popupRenderCurrent": {
+    "message": "Render this .org file"
+  },
+  "popupOpenViewer": {
+    "message": "Open viewer"
+  },
+  "popupChooseOrg": {
+    "message": "Choose .org file"
+  },
+  "popupLocalAccess": {
+    "message": "Local file access"
+  },
+  "popupAccessEnabled": {
+    "message": "Enabled"
+  },
+  "popupAccessDisabled": {
+    "message": "Not enabled"
+  },
+  "popupEnableAccess": {
+    "message": "Enable local file access"
+  },
+  "popupManageAccess": {
+    "message": "Manage"
+  },
+  "popupSettings": {
+    "message": "Settings"
+  },
+  "popupOnlyOrg": {
+    "message": "Only .org files are supported."
+  },
+  "popupRendering": {
+    "message": "Rendering..."
+  },
+  "popupRenderComplete": {
+    "message": "The current page has been rendered."
   }
 }
