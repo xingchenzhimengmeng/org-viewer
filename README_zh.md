@@ -59,11 +59,12 @@
 
 ### 第 1 步：在 Chrome 中安装扩展
 
-1. 打开 Google Chrome 浏览器，在地址栏输入 `chrome://extensions/` 并按回车进入扩展管理页面。
-2. 在页面右上角，打开 **「开发者模式」 (Developer mode)** 开关。
-3. 点击左上角的 **「加载已解压的扩展程序」 (Load unpacked)** 按钮。
-4. 在弹出的文件选择框中，选中本项目根目录（即包含 `manifest.json` 的目录）。
-5. 此时扩展列表中将出现 **Org Viewer** 图标，安装完成！
+1. 下载并解压：[插件发行版][https://github.com/xingchenzhimengmeng/org-viewer/archive/refs/tags/v1.1.0.zip]
+2. 打开 Google Chrome 浏览器，在地址栏输入 `chrome://extensions/` 并按回车进入扩展管理页面。
+3. 在页面右上角，打开 **「开发者模式」 (Developer mode)** 开关。
+4. 点击左上角的 **「加载已解压的扩展程序」 (Load unpacked)** 按钮。
+5. 在弹出的文件选择框中，选中本插件根目录（即包含 `manifest.json` 的目录）。
+6. 此时扩展列表中将出现 **Org Viewer** 图标，安装完成！
 
 ---
 
